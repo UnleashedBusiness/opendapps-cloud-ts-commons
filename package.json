@@ -1,0 +1,36 @@
+{
+  "name": "@unleashed-business/opendapps-cloud-ts-commons",
+  "version": "1.0.0",
+  "description": "",
+  "private": false,
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UnleashedBusiness/opendapps-cloud-ts-commons"
+  },
+  "types": "dist/index.d.ts",
+  "author": "ShadowsCrypto",
+  "license": "GPL-3.0",
+  "files": [
+    "/dist"
+  ],
+  "peerDependencies": {
+    "@unleashed-business/ts-web3-commons": "^1.0.5",
+    "@unleashed-business/opendapps-cloud-ts-abi": "^1.0.1",
+    "@metamask/eth-sig-util": "^7.0.0",
+    "@wagmi/core": "^1.4.2",
+    "@wagmi/chains": "^1.8.0",
+    "@wagmi/connectors": "^3.1.2",
+    "viem": "^1.12.1",
+    "web3-eth-contract": "^4.1.0",
+    "web3-eth": "^4.2.0",
+    "web3-core": "^4.2.0",
+    "web3-types": "^1.2.0",
+    "bignumber.js": "^9.1.2",
+    "web3": "^1.7.5",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
