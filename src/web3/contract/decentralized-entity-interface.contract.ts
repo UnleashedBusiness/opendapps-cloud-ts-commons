@@ -21,7 +21,7 @@ export class DecentralizedEntityInterfaceContract extends BaseMultiChainContract
         batch?: Web3BatchRequest,
         callback?: (result: string) => void
     ) {
-        return this.getViewMulti(config, entityAddress, async (contract) => contract.methods.organizationName(), batch, callback);
+        return this.getViewMulti(config, entityAddress, async (contract) => contract.methods.name(), batch, callback);
     }
 
     public async metadataUrl(

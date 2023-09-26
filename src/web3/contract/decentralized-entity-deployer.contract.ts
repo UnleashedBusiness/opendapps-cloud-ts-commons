@@ -18,31 +18,40 @@ export class DecentralizedEntityDeployerContract extends BaseMultiChainContract 
         return DecentralizedEntityDeployerAbi;
     }
 
-    public async ownershipNFTCollection(
+    public async singleOwnerNFTOwnershipContract(
         config: BlockchainDefinition,
         contractAddress: string,
         batch?: Web3BatchRequest,
         callback?: (result: string) => void
     ) {
-        return this.getPropertyMulti(config, contractAddress, 'ownershipNFTCollection', batch, callback);
+        return this.getPropertyMulti(config, contractAddress, 'singleOwnerNFTOwnershipContract', batch, callback);
     }
 
-    public async deploySingleOwnerEntity(contractAddress: string, name: string, metadataUrl: string) {
-        return this.buildMethodRunnableMulti(
-            contractAddress,
-            async (contract) => contract.methods.deploySingleOwnerEntity(name, metadataUrl));
+    public async sharesEntityNftOwnershipContract(
+        config: BlockchainDefinition,
+        contractAddress: string,
+        batch?: Web3BatchRequest,
+        callback?: (result: string) => void
+    ) {
+        return this.getPropertyMulti(config, contractAddress, 'sharesEntityNftOwnershipContract', batch, callback);
     }
 
-    public async deployMultiSignEntity(contractAddress: string, name: string, signatureCollectionBlocks: number, metadataUrl: string) {
+    public async deploySingleOwnerEntity(contractAddress: string, entityName: string, metadataUrl: string) {
         return this.buildMethodRunnableMulti(
             contractAddress,
-            async (contract) => contract.methods.deployMultiSignEntity(name, signatureCollectionBlocks, metadataUrl));
+            async (contract) => contract.methods.deploySingleOwnerEntity(entityName, metadataUrl));
     }
 
-    public async deployMultiSignSharesEntity(contractAddress: string, name: string, signatureCollectionBlocks: number, metadataUrl: string) {
+    public async deployMultiSignEntity(contractAddress: string, entityName: string, votingBlocksLength: number, metadataUrl: string) {
         return this.buildMethodRunnableMulti(
             contractAddress,
-            async (contract) => contract.methods.deployMultiSignSharesEntity(name, signatureCollectionBlocks, metadataUrl));
+            async (contract) => contract.methods.deployMultiSignEntity(entityName, votingBlocksLength, metadataUrl));
+    }
+
+    public async deployMultiSignSharesEntity(contractAddress: string, entityName: string, votingBlocksLength: number, metadataUrl: string) {
+        return this.buildMethodRunnableMulti(
+            contractAddress,
+            async (contract) => contract.methods.deployMultiSignSharesEntity(entityName, votingBlocksLength, metadataUrl));
     }
 
     public upgradeTreasury(contractAddress: string, treasury: string): MethodRunnable {

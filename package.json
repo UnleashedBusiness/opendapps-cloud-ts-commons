@@ -16,7 +16,7 @@
   ],
   "peerDependencies": {
     "@unleashed-business/ts-web3-commons": "^1.0.5",
-    "@unleashed-business/opendapps-cloud-ts-abi": "^1.0.1",
+    "@unleashed-business/opendapps-cloud-ts-abi": "^1.1.0",
     "@metamask/eth-sig-util": "^7.0.0",
     "@wagmi/core": "^1.4.2",
     "@wagmi/chains": "^1.8.0",
@@ -28,7 +28,8 @@
     "web3-types": "^1.2.0",
     "bignumber.js": "^9.1.2",
     "web3": "^1.7.5",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "axios": "^1.5.1"
   },
   "devDependencies": {
     "typescript": "^5.2.2"
