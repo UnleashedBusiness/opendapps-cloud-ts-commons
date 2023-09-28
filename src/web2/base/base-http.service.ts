@@ -2,7 +2,7 @@ import {HttpServiceConfig} from "../config/http-service.config";
 import axios from 'axios';
 
 export class BaseHttpService {
-    protected constructor(protected config: HttpServiceConfig) {
+    public constructor(protected config: HttpServiceConfig) {
     }
 
     protected async POST<T>(relativeURL: string, data: any = null): Promise<T> {
