@@ -1,6 +1,6 @@
 {
   "name": "@unleashed-business/opendapps-cloud-ts-commons",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "private": false,
   "main": "dist/index.js",
