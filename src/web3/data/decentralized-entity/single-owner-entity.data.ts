@@ -8,7 +8,6 @@ import {Web3BatchRequest} from "web3-core";
 
 export class SingleOwnerEntityData extends BaseDecentralizedEntityData {
     private _owner: string = EmptyAddress;
-    private _operators: string[] = [];
 
     public override get connectedWalletRoles(): string[] {
         const roles = [];
@@ -24,6 +23,10 @@ export class SingleOwnerEntityData extends BaseDecentralizedEntityData {
 
     public override get votingProposals(): string[] {
         return [];
+    }
+
+    public get owner(): string {
+        return this._owner;
     }
 
     constructor(

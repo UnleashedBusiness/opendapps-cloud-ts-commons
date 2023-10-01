@@ -31,6 +31,14 @@ export class MultiSignEntityData extends BaseDecentralizedEntityData {
         return this._votingProposals;
     }
 
+    public get rootSigners(): string[] {
+        return this._roots;
+    }
+
+    public get leafSigners(): string[] {
+        return this._leafs;
+    }
+
     constructor(
         deployment: DecentralizedEntityDeployment,
         routerAddress: string,
