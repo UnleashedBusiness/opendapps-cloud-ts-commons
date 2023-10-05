@@ -6,9 +6,7 @@ import {
     TransactionRunningHelperService,
     WalletConnectionService
 } from "@unleashed-business/ts-web3-commons";
-import BigNumber from "bignumber.js";
 import {Web3BatchRequest} from "web3-core";
-import {config} from "rxjs";
 
 export class AssetBackingContract extends BaseTokenAwareContract {
     constructor(token: Erc20TokenContract, walletConnection: WalletConnectionService, transactionHelper: TransactionRunningHelperService) {
