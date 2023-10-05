@@ -22,7 +22,7 @@ import {OwnershipNftCollectionContract} from "./web3/contract/ownership-nft-coll
 import {OwnershipSharesNftCollectionContract} from "./web3/contract/ownership-shares-nft-collection.contract";
 import {ReferralEngineContract} from "./web3/contract/referral-engine.contract";
 import {ContractDeployerContract} from "./web3/contract/contract-deployer.contract";
-import OpenDAppsCloudRouterContract from "./web3/contract/opendapps-cloud-router.contract";
+import {OpenDAppsCloudRouterContract} from "./web3/contract/opendapps-cloud-router.contract";
 
 export class Web3ServicesContainer {
   constructor(

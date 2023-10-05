@@ -7,7 +7,7 @@ import {Web3BatchRequest} from "web3-core";
 import {OpenDAppsCloudRouterAbi} from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/opendapps-cloud-router.abi";
 import {config} from "rxjs";
 
-export default class OpenDAppsCloudRouterContract extends BaseMultiChainContract {
+export class OpenDAppsCloudRouterContract extends BaseMultiChainContract {
     private propertyValueCache: Map<string, Map<string, Map<string, any>>> = new Map<string, Map<string, Map<string, any>>>();
 
     constructor(walletConnection: WalletConnectionService, transactionHelper: TransactionRunningHelperService) {

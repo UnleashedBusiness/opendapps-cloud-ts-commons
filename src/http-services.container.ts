@@ -3,7 +3,7 @@ import {TokenAsAServiceDeployerHttpService} from "./web2/token-as-a-service-depl
 import {NftProxyHttpService} from "./web2/nft-proxy-http.service";
 import {MultiSignProposalHttpService} from "./web2/multi-sign-proposal-http.service";
 import {IndexingHttpService} from "./web2/indexing-http.service";
-import DeploymentHttpService from "./web2/deployment.http.service";
+import {DeploymentHttpService} from "./web2/deployment.http.service";
 
 export class HttpServicesContainer {
   constructor(
