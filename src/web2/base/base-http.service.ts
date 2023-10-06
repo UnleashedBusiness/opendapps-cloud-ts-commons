@@ -48,7 +48,7 @@ export class BaseHttpService {
 
     protected getAbsoluteUrl(relativeUrl: string): string {
         return this.config.backendUrl[this.config.backendUrl.length - 1] === '/'
-            ? this.config.backendUrl.substring(-1)
+            ? this.config.backendUrl.substring(0, this.config.backendUrl.length - 1)
             : this.config.backendUrl
             + "/" +
             relativeUrl[0] === '/'

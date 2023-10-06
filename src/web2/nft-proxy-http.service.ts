@@ -60,7 +60,7 @@ export class NftProxyHttpService extends BaseHttpService {
 
   protected getAbsoluteUrl(relativeUrl: string): string {
     return this.config.nftProxyUrl[this.config.nftProxyUrl.length - 1] === '/'
-        ? this.config.nftProxyUrl.substring(-1)
+        ? this.config.nftProxyUrl.substring(0, this.config.nftProxyUrl.length - 1)
         : this.config.nftProxyUrl
         + "/" +
         relativeUrl[0] === '/'
