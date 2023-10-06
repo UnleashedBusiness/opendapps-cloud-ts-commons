@@ -93,7 +93,7 @@ export class OpenDAppsCloudRouterContract extends BaseMultiChainContract {
         if (!this.propertyValueCache.get(config.network)?.get(contractAddress)?.has(propertyName))
             this.propertyValueCache.get(config.network)?.get(contractAddress).set(
                 contractAddress,
-                await this.getPropertyMulti(config, contractAddress, propertyName) as T
+                await super.getPropertyMulti(config, contractAddress, propertyName) as T
             );
 
         if (callback) {
