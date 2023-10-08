@@ -42,7 +42,7 @@ export class OpenDAppsCloudRouterContract extends BaseMultiChainContract {
         batch?: Web3BatchRequest,
         callback?: (result: string) => void
     ) {
-        return this.getPropertyMulti(config, contractAddress, "referralsEngine", batch, callback);
+        return this.getPropertyMulti(config, contractAddress, "contractDeployer", batch, callback);
     }
 
     public async tokenAsAServiceDeployer(
@@ -85,11 +85,10 @@ export class OpenDAppsCloudRouterContract extends BaseMultiChainContract {
     protected async getPropertyMulti<T>(config: BlockchainDefinition, contractAddress: string, propertyName: string, batch?: Web3BatchRequest, callback?: (result: T) => void): Promise<void | T> {
         if (!this.propertyValueCache.has(config.network))
             this.propertyValueCache.set(config.network, new Map());
+
         if (!this.propertyValueCache.get(config.network)?.has(contractAddress))
-            this.propertyValueCache.get(config.network)?.set(
-                contractAddress,
-                new Map()
-            );
+            this.propertyValueCache.get(config.network)?.set(contractAddress, new Map());
+
         if (!this.propertyValueCache.get(config.network)?.get(contractAddress)?.has(propertyName))
             this.propertyValueCache.get(config.network)?.get(contractAddress).set(
                 contractAddress,
