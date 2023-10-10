@@ -2,16 +2,16 @@ import {BaseDeployerContract} from "./base/base-deployer.contract";
 import {ReferralsEngineAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BlockchainDefinition,
-    Erc20TokenContract,
-    TransactionRunningHelperService,
-    WalletConnectionService
+    Erc20TokenContract, ReadOnlyWeb3Connection,
+    TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import Web3 from "web3";
 import {Web3BatchRequest} from "web3-core";
 
 export class ReferralEngineContract extends BaseDeployerContract {
-    constructor(tokenService: Erc20TokenContract, walletConnection: WalletConnectionService, transactionHelper: TransactionRunningHelperService) {
-        super(tokenService, walletConnection, transactionHelper);
+
+    constructor(token: Erc20TokenContract, web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
+        super(token, web3Connection, transactionHelper);
     }
 
     protected getAbi(): any {

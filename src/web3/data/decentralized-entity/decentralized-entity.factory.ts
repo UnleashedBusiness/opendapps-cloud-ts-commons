@@ -4,21 +4,22 @@ import {MultiSignSharesEntityData} from "./multi-sign-shares-entity.data";
 import {SingleOwnerEntityData} from "./single-owner-entity.data";
 import {BaseDecentralizedEntityData} from "./base/base-decentralized-entity.data";
 import DecentralizedEntityDeployment from "../../../web2/data/deployment/decentralized-entity-deployment";
-import {WalletConnectionService} from "@unleashed-business/ts-web3-commons";
 import {Web3ServicesContainer} from "../../../web3-services.container";
 import {HttpServicesContainer} from "../../../http-services.container";
+import { BlockchainDefinition, ReadOnlyWeb3Connection } from "@unleashed-business/ts-web3-commons";
 
 export class DecentralizedEntityFactory {
     static async buildIt(
         address: string,
         routerAddress: string,
-        connection: WalletConnectionService,
+        connection: ReadOnlyWeb3Connection,
+        config: BlockchainDefinition,
         web3: Web3ServicesContainer,
         web2: HttpServicesContainer,
         useCache: boolean = false,
         autoLoad: boolean = true
     ): Promise<BaseDecentralizedEntityData> {
-        const deployment = await web2.deployment.fetch<DecentralizedEntityDeployment>(connection.blockchain.networkId, address);
+        const deployment = await web2.deployment.fetch<DecentralizedEntityDeployment>(config.networkId, address);
 
         let company: BaseDecentralizedEntityData
         switch (deployment.type) {
@@ -33,7 +34,7 @@ export class DecentralizedEntityFactory {
                 break;
         }
         if (autoLoad)
-            await company.load(useCache);
+            await company.load(useCache, config);
         return company;
     }
 }

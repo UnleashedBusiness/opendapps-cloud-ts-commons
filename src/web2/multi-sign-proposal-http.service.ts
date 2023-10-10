@@ -1,11 +1,9 @@
-import {HttpServiceConfig} from "./config/http-service.config";
-import {ProposalData} from "./data/multi-sign-proposal/proposal.data";
 import {ProposalWithStateData} from "./data/multi-sign-proposal/proposal-with-state.data";
 import {ProposalStateData} from "./data/multi-sign-proposal/proposal-state.data";
 import {BaseHttpService} from "./base/base-http.service";
 
 export class MultiSignProposalHttpService extends BaseHttpService {
-  public static readonly ADDR_PREFIX = '/multiSignProposal';
+  public static readonly ADDR_PREFIX = '/backend/multiSignProposal';
   public static readonly PROPOSAL_PUSH = `${MultiSignProposalHttpService.ADDR_PREFIX}/publish`;
   public static readonly PROPOSAL_LIST = `${MultiSignProposalHttpService.ADDR_PREFIX}/list/{chain}/{company}`;
   public static readonly PROPOSAL_GET = `${MultiSignProposalHttpService.ADDR_PREFIX}/get/{chain}/{company}/{proposalId}`;

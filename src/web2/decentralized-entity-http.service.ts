@@ -1,16 +1,11 @@
-import {HttpServiceConfig} from "./config/http-service.config";
 import {BaseHttpService} from "./base/base-http.service";
 import {OwnershipNftMetadataDeployData} from "./data/decentralized-entity/ownership-nft-metadata-deploy.data";
 
 export class DecentralizedEntityHttpService extends BaseHttpService {
-  private static readonly ADDR_PREFIX = '/company';
+  private static readonly ADDR_PREFIX = '/backend/entity';
   public static readonly DEPLOY_OWNERSHIP_NFT = `${DecentralizedEntityHttpService.ADDR_PREFIX}/ownershipNFTMetadata`;
   public static readonly MEMBER_OF = `${DecentralizedEntityHttpService.ADDR_PREFIX}/{chainId}/memberOf/{wallet}`;
-  public static readonly COMPANY_MEMBERS = `${DecentralizedEntityHttpService.ADDR_PREFIX}/{chainId}/members/{organization}`;
-
-  constructor(config: HttpServiceConfig) {
-    super(config);
-  }
+  public static readonly COMPANY_MEMBERS = `${DecentralizedEntityHttpService.ADDR_PREFIX}/{chainId}/members/{entity}`;
 
   public async memberOf(chainId: number, wallet: string): Promise<string[]> {
     const relativePath = DecentralizedEntityHttpService.MEMBER_OF
@@ -19,10 +14,10 @@ export class DecentralizedEntityHttpService extends BaseHttpService {
     return this.GET(relativePath)
   }
 
-  public async members(chainId: number, organization: string): Promise<string[]> {
+  public async members(chainId: number, entity: string): Promise<string[]> {
     const relativePath = DecentralizedEntityHttpService.COMPANY_MEMBERS
       .replace("{chainId}", chainId.toString())
-      .replace("{organization}", organization);
+      .replace("{entity}", entity);
     return this.GET(relativePath)
   }
 

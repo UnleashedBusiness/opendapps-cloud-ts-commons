@@ -1,21 +1,20 @@
 import {TokenAsAServiceDeployerAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BaseTokenAwareContract, BlockchainDefinition,
-    Erc20TokenContract, MethodRunnable,
-    TransactionRunningHelperService,
-    WalletConnectionService
+    Erc20TokenContract, MethodRunnable, ReadOnlyWeb3Connection,
+    TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
 import {Web3BatchRequest} from "web3-core";
 
 export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract {
-
     public static readonly GROUP_TOKEN = Web3.utils.soliditySha3("Token")!;
     public static readonly GROUP_TOKENOMICS = Web3.utils.soliditySha3("Tokenomics")!;
 
-    constructor(tokenService: Erc20TokenContract, walletConnection: WalletConnectionService, transactionHelper: TransactionRunningHelperService) {
-        super(tokenService, walletConnection, transactionHelper);
+
+    constructor(token: Erc20TokenContract, web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
+        super(token, web3Connection, transactionHelper);
     }
 
     protected getAbi(): any {

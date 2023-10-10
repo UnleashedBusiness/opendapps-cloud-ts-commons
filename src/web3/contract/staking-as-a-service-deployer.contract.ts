@@ -1,9 +1,8 @@
 
 import {StakingAsAServiceDeployerAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
-  BaseMultiChainContract,
-  TransactionRunningHelperService,
-  WalletConnectionService
+  BaseMultiChainContract, ReadOnlyWeb3Connection,
+  TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
@@ -11,8 +10,8 @@ import BigNumber from "bignumber.js";
 export class StakingAsAServiceDeployerContract extends BaseMultiChainContract {
   public static readonly GROUP_STAKING = Web3.utils.soliditySha3("Staking")!;
 
-  constructor(walletConnection: WalletConnectionService, transactionHelper: TransactionRunningHelperService) {
-    super(walletConnection, transactionHelper);
+  constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
+    super(web3Connection, transactionHelper);
   }
 
   protected getAbi(): any {

@@ -1,15 +1,13 @@
 import BigNumber from "bignumber.js";
 import {
-    BaseTokenAwareContract, BlockchainDefinition, EmptyAddress, Erc20TokenContract,
-    TransactionRunningHelperService,
-    WalletConnectionService
+    BaseTokenAwareContract, BlockchainDefinition, EmptyAddress, Erc20TokenContract, ReadOnlyWeb3Connection,
+    TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
-import {ContractAbi} from "web3-types";
 import {Web3BatchRequest} from "web3-core";
 
 export abstract class BaseDeployerContract extends BaseTokenAwareContract {
-    protected constructor(tokenService: Erc20TokenContract, walletConnection: WalletConnectionService, transactionHelper: TransactionRunningHelperService) {
-        super(tokenService, walletConnection, transactionHelper);
+    protected constructor(token: Erc20TokenContract, web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
+        super(token, web3Connection, transactionHelper);
     }
 
     public async isUpgradeable(

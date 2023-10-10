@@ -3,16 +3,17 @@ import {
     BaseTokenAwareContract, BlockchainDefinition,
     Erc20TokenContract, MethodRunnable,
     TransactionRunningHelperService,
-    WalletConnectionService
+    ReadOnlyWeb3Connection
 } from "@unleashed-business/ts-web3-commons";
 import BigNumber from "bignumber.js";
 import {Web3BatchRequest} from "web3-core";
+import { config, max, min } from "rxjs";
 
 export class StakingAsAServiceContract extends BaseTokenAwareContract {
     private stakingToTokenCache: { [index: string]: { [index: string]: string } } = {};
 
-    constructor(token: Erc20TokenContract, walletConnection: WalletConnectionService, transactionHelper: TransactionRunningHelperService) {
-        super(token, walletConnection, transactionHelper);
+    constructor(token: Erc20TokenContract, web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
+        super(token, web3Connection, transactionHelper);
     }
 
     protected getAbi(): any {

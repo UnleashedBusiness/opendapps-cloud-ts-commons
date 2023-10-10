@@ -1,9 +1,8 @@
-import {HttpServiceConfig} from "./config/http-service.config";
 import {BaseHttpService} from "./base/base-http.service";
 import {OwnershipNftMetadataDeployData} from "./data/decentralized-entity/ownership-nft-metadata-deploy.data";
 
 export class TokenAsAServiceDeployerHttpService extends BaseHttpService {
-  private static readonly ADDR_PREFIX = '/taas-deployer';
+  private static readonly ADDR_PREFIX = '/backend/taas-deployer';
   public static readonly OWNER_OF = `${TokenAsAServiceDeployerHttpService.ADDR_PREFIX}/{chainId}/ownerOf/{wallet}`;
   public static readonly DEPLOY_OWNERSHIP_NFT = `${TokenAsAServiceDeployerHttpService.ADDR_PREFIX}/ownershipNFTMetadata`;
 

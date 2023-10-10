@@ -3,17 +3,18 @@ import {GovernanceProposalData} from "./base/governance-proposal.data";
 import {ProposalWithStateData} from "../../../web2/data/multi-sign-proposal/proposal-with-state.data";
 import {MultiSignProposalData} from "./multi-sign-proposal.data";
 import {MultiSignSharesProposalData} from "./multi-sign-shares-proposal.data";
-import {WalletConnectionService} from "@unleashed-business/ts-web3-commons";
 import {Web3ServicesContainer} from "../../../web3-services.container";
 import {HttpServicesContainer} from "../../../http-services.container";
 import DecentralizedEntityDeployment from "../../../web2/data/deployment/decentralized-entity-deployment";
+import { BlockchainDefinition, ReadOnlyWeb3Connection } from "@unleashed-business/ts-web3-commons";
 
 export class GovernanceProposalFactory {
     private static decentralizedEntityTypeCache: { [index: string]: number } = {}
 
     static async buildIt(
         proposal: ProposalWithStateData,
-        connection: WalletConnectionService,
+        connection: ReadOnlyWeb3Connection,
+        config: BlockchainDefinition,
         web3: Web3ServicesContainer,
         web2: HttpServicesContainer,
         useCache: boolean = false,
@@ -22,7 +23,7 @@ export class GovernanceProposalFactory {
         if (typeof GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.companyAddress] === "undefined") {
             const deployment = await web2
                 .deployment
-                .fetch<DecentralizedEntityDeployment>(connection.blockchain.networkId, proposal.companyAddress);
+                .fetch<DecentralizedEntityDeployment>(config.networkId, proposal.companyAddress);
 
             GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.companyAddress] = deployment.type;
         }
@@ -38,7 +39,7 @@ export class GovernanceProposalFactory {
                 break;
         }
         if (autoLoad)
-            await governanceProposal.load(useCache);
+            await governanceProposal.load(useCache, config);
         return governanceProposal;
     }
 }

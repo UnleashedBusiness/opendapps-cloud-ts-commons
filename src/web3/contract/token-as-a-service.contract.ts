@@ -1,16 +1,15 @@
 import {TokenAsAServiceAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BlockchainDefinition,
-    Erc20TokenContract,
-    TransactionRunningHelperService,
-    WalletConnectionService
+    Erc20TokenContract, ReadOnlyWeb3Connection,
+    TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import BigNumber from "bignumber.js";
 import {Web3BatchRequest} from "web3-core";
 
 export class TokenAsAServiceContract extends Erc20TokenContract {
-    constructor(walletConnection: WalletConnectionService, transactionHelper: TransactionRunningHelperService) {
-        super(walletConnection, transactionHelper);
+    constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
+        super(web3Connection, transactionHelper);
     }
 
     protected override getAbi(): any {

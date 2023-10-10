@@ -1,6 +1,6 @@
 import {Web3DataInterface} from "../base/web3-data.interface";
 import BigNumber from "bignumber.js";
-import {EmptyAddress, WalletConnectionService} from "@unleashed-business/ts-web3-commons";
+import { BlockchainDefinition, EmptyAddress, ReadOnlyWeb3Connection } from "@unleashed-business/ts-web3-commons";
 import {EventEmitter} from "@unleashed-business/ts-web3-commons/dist/utils/event-emitter";
 import TokenDeployment from "../../../web2/data/deployment/token-deployment";
 import {Web3ServicesContainer} from "../../../web3-services.container";
@@ -139,22 +139,21 @@ export class TokenData implements Web3DataInterface {
     public constructor(
         public readonly deployment: TokenDeployment,
         protected readonly routerAddress: string,
-        protected readonly connection: WalletConnectionService,
+        protected readonly connection: ReadOnlyWeb3Connection,
         protected readonly web3: Web3ServicesContainer,
         protected readonly web2: HttpServicesContainer
     ) {
     }
 
-    async load(useCaching: boolean, web3Batch?: Web3BatchRequest): Promise<void> {
-        const web3Config = this.connection.blockchain;
-        const batch = web3Batch ?? new this.connection.web3.BatchRequest();
+    async load(useCaching: boolean, config: BlockchainDefinition, web3Batch?: Web3BatchRequest): Promise<void> {
+        const batch = web3Batch ?? new (this.connection.getWeb3ReadOnly(config)).BatchRequest();
 
         if (this._initialLoading || !useCaching) {
             this._ownershipCollection = await this.web3
                 .tokenAsAService
-                .ownershipCollection(web3Config, this.address) as string;
+                .ownershipCollection(config, this.address) as string;
             try {
-                this._isOwnedByNFT = await this.web3.tokenAsAService.isOwnedByNFT(web3Config, this.address) as boolean;
+                this._isOwnedByNFT = await this.web3.tokenAsAService.isOwnedByNFT(config, this.address) as boolean;
             } catch (e) {
                 this._isOwnedByNFT = this._ownershipCollection !== EmptyAddress;
             }
@@ -163,18 +162,18 @@ export class TokenData implements Web3DataInterface {
                 await this.web3
                     .tokenAsAService
                     .ownershipTokenId(
-                        web3Config, this.address, batch,
+                        config, this.address, batch,
                         result => {
                             this._ownershipTokenId = result
                         });
 
                 this._imageLoading = true;
                 this.web2.nftProxy
-                    .getTokenMetadata(web3Config.networkId, this.address)
+                    .getTokenMetadata(config.networkId, this.address)
                     .then(metadata => {
                         if (metadata.image !== '') {
                             this.web2.nftProxy
-                                .getTokenImageUrl(web3Config.networkId, this.address)
+                                .getTokenImageUrl(config.networkId, this.address)
                                 .then(value => {
                                     this._imageUrl = value;
                                     this._imageLoading = false;
@@ -190,13 +189,13 @@ export class TokenData implements Web3DataInterface {
             }
         }
 
-        const contractDeployer = await this.web3.openDAppsCloudRouter.contractDeployer(web3Config, this.routerAddress) as string;
+        const contractDeployer = await this.web3.openDAppsCloudRouter.contractDeployer(config, this.routerAddress) as string;
         this._hasInflation = EmptyAddress !== this.deployment.inflation;
         if (this._hasInflation) {
             await this.web3
                 .contractDeployer
                 .isUpgradeable(
-                    web3Config, contractDeployer, this.inflation, batch,
+                    config, contractDeployer, this.inflation, batch,
                     result => {
                         this._inflationUpgradeable = result
                     });
@@ -204,21 +203,21 @@ export class TokenData implements Web3DataInterface {
         await this.web3
             .contractDeployer
             .isUpgradeable(
-                web3Config, contractDeployer, this.tokenomics, batch,
+                config, contractDeployer, this.tokenomics, batch,
                 result => {
                     this._tokenomicsUpgradeable = result
                 });
         await this.web3
             .contractDeployer
             .isUpgradeable(
-                web3Config, contractDeployer, this.treasury, batch,
+                config, contractDeployer, this.treasury, batch,
                 result => {
                     this._treasuryUpgradeable = result
                 });
 
         if (this.hasStaking) {
             await this.web3.contractDeployer.isUpgradeable(
-                web3Config, contractDeployer, this.staking!, batch,
+                config, contractDeployer, this.staking!, batch,
                 result => {
                     this._stakingUpgradeable = result
                 });
@@ -226,22 +225,22 @@ export class TokenData implements Web3DataInterface {
         await this.web3
             .dymanicTokenomics
             .availableTaxableConfigurations(
-                web3Config, this.tokenomics, batch,
+                config, this.tokenomics, batch,
                 result => {
                     this._hasComplexType = result > 1
                 });
 
         if (this._initialLoading || !useCaching) {
-            await this.web3.token.symbol(web3Config, this.address, batch, result => this._symbol = result);
-            await this.web3.token.decimals(web3Config, this.address, batch, result => this._decimals = result);
-            await this.web3.token.name(web3Config, this.address, batch, result => this._name = result);
+            await this.web3.token.symbol(config, this.address, batch, result => this._symbol = result);
+            await this.web3.token.decimals(config, this.address, batch, result => this._decimals = result);
+            await this.web3.token.name(config, this.address, batch, result => this._name = result);
         }
-        await this.web3.token.totalSupply(web3Config, this.address, batch, result => this._totalSupply = result);
+        await this.web3.token.totalSupply(config, this.address, batch, result => this._totalSupply = result);
         if (this.hasTreasury) {
             await this.web3
                 .tokenLiquidityTreasury
                 .getTokenDexListings(
-                    web3Config, this.treasury, batch,
+                    config, this.treasury, batch,
                     result => {
                         this._dexListings = result
                     });
@@ -250,11 +249,11 @@ export class TokenData implements Web3DataInterface {
         await this.web3
             .tokenAsAService
             .owner(
-                this.connection.blockchain, this.address, batch,
+                config, this.address, batch,
                 async result => {
                     this._owner = result;
                     try {
-                        this._ownerName = await this.web3.decentralizedEntityInterface.name(web3Config, result) as string;
+                        this._ownerName = await this.web3.decentralizedEntityInterface.name(config, result) as string;
                         this._ownerIsCompany = true;
                     } catch (e) {
                         this._ownerName = "My Wallet";

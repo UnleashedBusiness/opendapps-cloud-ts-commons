@@ -1,15 +1,14 @@
 import {DecentralizedEntityInterfaceContract} from "./decentralized-entity-interface.contract";
 import {SingleOwnerEntityAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
-  BlockchainDefinition, MethodRunnable,
-  TransactionRunningHelperService,
-  WalletConnectionService
+  BlockchainDefinition, MethodRunnable, ReadOnlyWeb3Connection,
+  TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
 
 export class SingleOwnerEntityContract extends DecentralizedEntityInterfaceContract {
-  constructor(walletConnection: WalletConnectionService, transactionHelper: TransactionRunningHelperService) {
-    super(walletConnection, transactionHelper);
+  constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
+    super(web3Connection, transactionHelper);
   }
 
   protected override getAbi(): any {

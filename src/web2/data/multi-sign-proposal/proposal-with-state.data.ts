@@ -1,6 +1,15 @@
-import {ProposalData} from "./proposal.data";
+import { MethodClass, ProposalData } from "./proposal.data";
 
 export class ProposalWithStateData extends ProposalData {
-  public state: number = -1;
-  public voters: string[] = [];
+  constructor(
+    targetChain: number = 0,
+    companyAddress: string = "",
+    description: string = "",
+    proposalId: string = "",
+    methodCallList: MethodClass[] = [],
+    public state: number = -1,
+    public voters: string[] = [],
+  ) {
+    super(targetChain, companyAddress, description, proposalId, methodCallList);
+  }
 }
