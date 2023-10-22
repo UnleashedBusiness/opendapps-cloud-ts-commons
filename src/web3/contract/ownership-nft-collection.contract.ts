@@ -8,7 +8,6 @@ import {
     TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 
-// @ts-ignore Me failed to follow interface.... just a name problem for output param
 export class OwnershipNftCollectionContract extends Erc721Contract<OwnershipNFTCollectionAbiFunctional> {
     constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
         super({web3Connection, transactionHelper});
