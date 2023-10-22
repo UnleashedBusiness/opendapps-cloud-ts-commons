@@ -1,4 +1,5 @@
 import axios from "axios";
+import UrlUtils from "../../utils/url-utils";
 
 export abstract class BaseHttpService {
   public constructor(protected readonly baseUrl: string) {}
@@ -49,12 +50,6 @@ export abstract class BaseHttpService {
   }
 
   protected getAbsoluteUrl(relativeUrl: string): string {
-    return (
-      (this.baseUrl[this.baseUrl.length - 1] === "/"
-        ? this.baseUrl.substring(0, this.baseUrl.length - 1)
-        : this.baseUrl) +
-      "/" +
-      (relativeUrl[0] === "/" ? relativeUrl.substring(1) : relativeUrl)
-    );
+    return UrlUtils.getAbsoluteUrl(this.baseUrl, relativeUrl);
   }
 }
