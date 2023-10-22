@@ -1,4 +1,4 @@
-import {InflationAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
+import { InflationAbi, InflationAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BaseTokenAwareContract, BlockchainDefinition,
     Erc20TokenContract, ReadOnlyWeb3Connection,
@@ -6,7 +6,7 @@ import {
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
 
-export class InflationContract extends BaseTokenAwareContract {
+export class InflationContract extends BaseTokenAwareContract<InflationAbiFunctional> {
     constructor(token: Erc20TokenContract, web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
         super(token, web3Connection, transactionHelper);
     }

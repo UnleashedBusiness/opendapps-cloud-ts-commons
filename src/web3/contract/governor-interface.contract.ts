@@ -1,12 +1,15 @@
 import BigNumber from "bignumber.js";
-import {ProposalGovernorInterfaceAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
+import {
+  ProposalGovernorInterfaceAbi,
+  ProposalGovernorInterfaceAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BaseMultiChainContract, BlockchainDefinition, DefaultEVMNativeTokenDecimals, MethodRunnable, ReadOnlyWeb3Connection,
     TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
 
-export class GovernorInterfaceContract extends BaseMultiChainContract {
+export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGovernorInterfaceAbiFunctional> {
   constructor(
     web3Connection: ReadOnlyWeb3Connection,
     transactionHelper: TransactionRunningHelperService,

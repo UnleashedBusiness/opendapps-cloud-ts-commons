@@ -13,7 +13,6 @@ export * from './web3/data/multi-sign-proposal/multi-sign-proposal.data';
 export * from './web3/data/multi-sign-proposal/governance-proposal.factory';
 export * from './web3/data/multi-sign-proposal/multi-sign-shares-proposal.data';
 
-export * from './web3/contract/base/base-deployer.contract';
 export * from './web3/contract/asset-backing.contract';
 export * from './web3/contract/baseline-insurance-deployer.contract';
 export * from './web3/contract/contract-deployer.contract';

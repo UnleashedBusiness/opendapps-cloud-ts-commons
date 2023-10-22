@@ -1,4 +1,4 @@
-import {TokenRewardsTreasuryAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
+import { TokenRewardsTreasuryAbi, TokenRewardsTreasuryAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BaseTokenAwareContract, BlockchainDefinition,
     Erc20TokenContract, ReadOnlyWeb3Connection,
@@ -7,7 +7,7 @@ import {
 import BigNumber from "bignumber.js";
 import {Web3BatchRequest} from "web3-core";
 
-export class TokenRewardsTreasuryContract extends BaseTokenAwareContract {
+export class TokenRewardsTreasuryContract extends BaseTokenAwareContract<TokenRewardsTreasuryAbiFunctional> {
 
     constructor(token: Erc20TokenContract, web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
         super(token, web3Connection, transactionHelper);

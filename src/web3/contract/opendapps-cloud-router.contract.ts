@@ -5,9 +5,12 @@ import {
   TransactionRunningHelperService,
 } from "@unleashed-business/ts-web3-commons";
 import { Web3BatchRequest } from "web3-core";
-import { OpenDAppsCloudRouterAbi } from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/opendapps-cloud-router.abi";
+import {
+  OpenDAppsCloudRouterAbi,
+  OpenDAppsCloudRouterAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/opendapps-cloud-router.abi";
 
-export class OpenDAppsCloudRouterContract extends BaseMultiChainContract {
+export class OpenDAppsCloudRouterContract extends BaseMultiChainContract<OpenDAppsCloudRouterAbiFunctional> {
   private propertyValueCache: Map<string, any> = new Map<string, any>();
 
   constructor(

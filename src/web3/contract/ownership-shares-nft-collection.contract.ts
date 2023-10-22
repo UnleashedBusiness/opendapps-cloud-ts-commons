@@ -1,12 +1,15 @@
 
-import {OwnershipSharesNFTCollectionAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
+import {
+  OwnershipSharesNFTCollectionAbi,
+  OwnershipSharesNFTCollectionAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
   BaseMultiChainContract, BlockchainDefinition, MethodRunnable, ReadOnlyWeb3Connection,
   TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
 
-export class OwnershipSharesNftCollectionContract extends BaseMultiChainContract {
+export class OwnershipSharesNftCollectionContract extends BaseMultiChainContract<OwnershipSharesNFTCollectionAbiFunctional> {
 
   constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
     super(web3Connection, transactionHelper);

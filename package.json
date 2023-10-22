@@ -15,8 +15,8 @@
     "/dist"
   ],
   "peerDependencies": {
-    "@unleashed-business/ts-web3-commons": "^2.0.0",
-    "@unleashed-business/opendapps-cloud-ts-abi": "^1.3.1",
+    "@unleashed-business/ts-web3-commons": "^3.0.3",
+    "@unleashed-business/opendapps-cloud-ts-abi": "^2.0.2",
     "web3-core": "^4.2.0",
     "bignumber.js": "^9.1.2",
     "rxjs": "^7.8.1",

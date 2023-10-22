@@ -1,5 +1,8 @@
 
-import {StakingAsAServiceDeployerAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
+import {
+  StakingAsAServiceDeployerAbi,
+  StakingAsAServiceDeployerAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
   BaseMultiChainContract, ReadOnlyWeb3Connection,
   TransactionRunningHelperService
@@ -7,7 +10,7 @@ import {
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
 
-export class StakingAsAServiceDeployerContract extends BaseMultiChainContract {
+export class StakingAsAServiceDeployerContract extends BaseMultiChainContract<StakingAsAServiceDeployerAbiFunctional> {
   public static readonly GROUP_STAKING = Web3.utils.soliditySha3("Staking")!;
 
   constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {

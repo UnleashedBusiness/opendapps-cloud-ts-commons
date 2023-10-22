@@ -1,11 +1,15 @@
-import {OwnershipNFTCollectionAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
+import {
+    OwnershipNFTCollectionAbi,
+    OwnershipNFTCollectionAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BlockchainDefinition,
     Erc721Contract, ReadOnlyWeb3Connection,
     TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 
-export class OwnershipNftCollectionContract extends Erc721Contract {
+// @ts-ignore Me failed to follow interface.... just a name problem for output param
+export class OwnershipNftCollectionContract extends Erc721Contract<OwnershipNFTCollectionAbiFunctional> {
     constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
         super({web3Connection, transactionHelper});
     }

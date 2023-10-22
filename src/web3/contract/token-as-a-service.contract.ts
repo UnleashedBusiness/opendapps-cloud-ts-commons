@@ -1,4 +1,4 @@
-import { TokenAsAServiceAbi } from "@unleashed-business/opendapps-cloud-ts-abi";
+import { TokenAsAServiceAbi, TokenAsAServiceAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
   BlockchainDefinition,
   Erc20TokenContract,
@@ -8,7 +8,7 @@ import {
 import BigNumber from "bignumber.js";
 import { Web3BatchRequest } from "web3-core";
 
-export class TokenAsAServiceContract extends Erc20TokenContract {
+export class TokenAsAServiceContract extends Erc20TokenContract<TokenAsAServiceAbiFunctional> {
   constructor(
     web3Connection: ReadOnlyWeb3Connection,
     transactionHelper: TransactionRunningHelperService,
@@ -99,21 +99,6 @@ export class TokenAsAServiceContract extends Erc20TokenContract {
       config,
       address,
       "ownershipTokenId",
-      batch,
-      callback,
-    );
-  }
-
-  public async tax(
-    config: BlockchainDefinition,
-    address: string,
-    batch?: Web3BatchRequest,
-    callback?: (result: number) => void,
-  ) {
-    return this.getViewMulti(
-      config,
-      address,
-      (contract) => contract.methods.tax(),
       batch,
       callback,
     );

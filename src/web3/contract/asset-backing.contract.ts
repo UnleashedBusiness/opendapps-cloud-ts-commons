@@ -1,4 +1,7 @@
-import {TokenAsAServiceAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
+import {
+    AssetBackingAbi,
+    AssetBackingAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BaseTokenAwareContract,
     BlockchainDefinition,
@@ -7,14 +10,14 @@ import {
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
 
-export class AssetBackingContract extends BaseTokenAwareContract {
+export class AssetBackingContract extends BaseTokenAwareContract<AssetBackingAbiFunctional> {
 
     constructor(token: Erc20TokenContract, web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
         super(token, web3Connection, transactionHelper);
     }
 
     protected override getAbi(): any {
-        return TokenAsAServiceAbi;
+        return AssetBackingAbi;
     }
 
     public async isOwnedByNFT(

@@ -1,12 +1,15 @@
 import {DecentralizedEntityInterfaceContract} from "./decentralized-entity-interface.contract";
-import {MultiSignSharesEntityAbi} from "@unleashed-business/opendapps-cloud-ts-abi";
+import {
+    MultiSignSharesEntityAbi,
+    MultiSignSharesEntityAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BlockchainDefinition, ReadOnlyWeb3Connection,
     TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
 
-export class MultiSignSharesEntityContract extends DecentralizedEntityInterfaceContract {
+export class MultiSignSharesEntityContract extends DecentralizedEntityInterfaceContract<MultiSignSharesEntityAbiFunctional> {
 
     constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
         super(web3Connection, transactionHelper);
