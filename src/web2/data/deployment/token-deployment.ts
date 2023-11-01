@@ -4,7 +4,7 @@ export default class TokenDeployment extends DeploymentBase {
   constructor(
     address: string,
     group: string,
-    public readonly type: number,
+    public readonly type: string,
     public readonly tokenomics: string,
     public readonly inflation: string,
     public readonly treasury: string,

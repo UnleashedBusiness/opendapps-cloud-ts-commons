@@ -5,7 +5,7 @@ export default class DecentralizedEntityDeployment extends DeploymentBase {
     address: string,
     group: string,
     public readonly treasury: string,
-    public readonly type: number,
+    public readonly type: string,
   ) {
     super(address, group);
   }

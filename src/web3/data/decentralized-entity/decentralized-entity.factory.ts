@@ -22,7 +22,7 @@ export class DecentralizedEntityFactory {
         const deployment = await web2.deployment.fetch<DecentralizedEntityDeployment>(config.networkId, address);
 
         let company: BaseDecentralizedEntityData
-        switch (deployment.type) {
+        switch (parseInt(deployment.type)) {
             case OrganizationTypeEnum.HierarchicalMultiSign.valueOf():
                 company = new MultiSignEntityData(deployment, routerAddress, connection, web3, web2);
                 break;
