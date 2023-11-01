@@ -25,7 +25,7 @@ export class GovernanceProposalFactory {
                 .deployment
                 .fetch<DecentralizedEntityDeployment>(config.networkId, proposal.companyAddress);
 
-            GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.companyAddress] = deployment.type;
+            GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.companyAddress] = parseInt(deployment.type);
         }
         const type = GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.companyAddress];
 

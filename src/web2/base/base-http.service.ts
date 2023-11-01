@@ -1,5 +1,5 @@
+import UrlUtils from '@unleashed-business/ts-web3-commons/dist/utils/url-utils';
 import axios from "axios";
-import UrlUtils from "../../utils/url-utils";
 
 export abstract class BaseHttpService {
   public constructor(protected readonly baseUrl: string) {}

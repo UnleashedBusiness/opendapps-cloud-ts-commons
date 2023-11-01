@@ -31,7 +31,7 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
   }
 
   public get type(): number {
-    return this.deployment.type;
+    return parseInt(this.deployment.type);
   }
 
   public get rewardsTreasury(): string {
