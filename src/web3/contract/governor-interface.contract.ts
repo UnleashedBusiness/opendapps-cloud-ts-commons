@@ -4,8 +4,13 @@ import {
   ProposalGovernorInterfaceAbiFunctional
 } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
-    BaseMultiChainContract, BlockchainDefinition, DefaultEVMNativeTokenDecimals, MethodRunnable, ReadOnlyWeb3Connection,
-    TransactionRunningHelperService
+  BaseMultiChainContract,
+  BlockchainDefinition,
+  DefaultEVMNativeTokenDecimals,
+  MethodRunnable,
+  NumericResult,
+  ReadOnlyWeb3Connection,
+  TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
 
@@ -176,7 +181,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
       governor,
       async (contract) => contract.methods.proposalVoteStartBlock(proposalId),
       batch,
-      callback,
+      callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,
     );
   }
 
@@ -192,7 +197,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
       governor,
       async (contract) => contract.methods.proposalVoteEndBlock(proposalId),
       batch,
-      callback,
+      callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,
     );
   }
 }

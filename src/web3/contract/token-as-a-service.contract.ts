@@ -1,9 +1,9 @@
 import { TokenAsAServiceAbi, TokenAsAServiceAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
   BlockchainDefinition,
-  Erc20TokenContract,
+  Erc20TokenContract, NumericResult,
   ReadOnlyWeb3Connection,
-  TransactionRunningHelperService,
+  TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import BigNumber from "bignumber.js";
 import { Web3BatchRequest } from "web3-core";
@@ -100,7 +100,7 @@ export class TokenAsAServiceContract extends Erc20TokenContract<TokenAsAServiceA
       address,
       "ownershipTokenId",
       batch,
-      callback,
+      callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,
     );
   }
 
@@ -115,11 +115,11 @@ export class TokenAsAServiceContract extends Erc20TokenContract<TokenAsAServiceA
       address,
       (contract) => contract.methods.maxSupply(),
       batch,
-      (result: number) =>
+      async (result: NumericResult) =>
         callback
           ? callback(
               this.wrap(result).dividedBy(
-                10 ** this.decimalsSync(config, address),
+                10 ** await this.decimalsDirect(config, address),
               ),
             )
           : undefined,
@@ -137,11 +137,11 @@ export class TokenAsAServiceContract extends Erc20TokenContract<TokenAsAServiceA
       address,
       (contract) => contract.methods.initialSupply(),
       batch,
-      (result: number) =>
+      async (result: NumericResult) =>
         callback
           ? callback(
               this.wrap(result).dividedBy(
-                10 ** this.decimalsSync(config, address),
+                10 ** await this.decimalsDirect(config, address),
               ),
             )
           : undefined,

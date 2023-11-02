@@ -1,8 +1,8 @@
 import { InflationAbi, InflationAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BaseTokenAwareContract, BlockchainDefinition,
-    Erc20TokenContract, ReadOnlyWeb3Connection,
-    TransactionRunningHelperService,
+    Erc20TokenContract, NumericResult, ReadOnlyWeb3Connection,
+    TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
 
@@ -30,7 +30,7 @@ export class InflationContract extends BaseTokenAwareContract<InflationAbiFuncti
          batch?: Web3BatchRequest,
         callback?: (result: number) => void
     ) {
-        return this.getPropertyMulti(config, address, 'maxCycles', batch, callback);
+        return this.getPropertyMulti(config, address, 'maxCycles', batch, callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,);
     }
 
     public async currentRewardsCycle(
@@ -39,7 +39,7 @@ export class InflationContract extends BaseTokenAwareContract<InflationAbiFuncti
          batch?: Web3BatchRequest,
         callback?: (result: number) => void
     ) {
-        return this.getPropertyMulti(config, address, 'currentRewardsCycle', batch, callback);
+        return this.getPropertyMulti(config, address, 'currentRewardsCycle', batch, callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,);
     }
 
     public async blocksPerCycle(
@@ -48,7 +48,7 @@ export class InflationContract extends BaseTokenAwareContract<InflationAbiFuncti
          batch?: Web3BatchRequest,
         callback?: (result: number) => void
     ) {
-        return this.getPropertyMulti(config, address, 'blocksPerCycle', batch, callback);
+        return this.getPropertyMulti(config, address, 'blocksPerCycle', batch, callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,);
     }
 
     public async getPayees(
@@ -77,7 +77,7 @@ export class InflationContract extends BaseTokenAwareContract<InflationAbiFuncti
             address,
             async (contract) => contract.methods.payeePercent(wallet),
             batch,
-            callback);
+          callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,);
     }
 
     public async controller(
@@ -87,11 +87,12 @@ export class InflationContract extends BaseTokenAwareContract<InflationAbiFuncti
         callback?: (result: string) => void
     ) {
         return this.getViewMulti(
-            config,
-            address,
-            async (contract) => contract.methods.getController(),
-            batch,
-            callback);
+          config,
+          address,
+          async (contract) => contract.methods.getController(),
+          batch,
+          callback,
+        );
     }
 
     public addPayee(address: string, account: string, shares: number) {
