@@ -51,29 +51,29 @@ export class MultiSignSharesProposalData extends GovernanceProposalData {
 
     if (
       typeof MultiSignSharesProposalData.companyOwnershipTokenCache[
-        this.proposal.companyAddress
+        this.proposal.entityAddress
       ] === "undefined"
     ) {
       MultiSignSharesProposalData.companyOwnershipTokenCache[
-        this.proposal.companyAddress
+        this.proposal.entityAddress
       ] = {
         collection: (await this.web3.multiSignSharesEntity.ownershipCollection(
           config,
-          this.proposal.companyAddress,
+          this.proposal.entityAddress,
         )) as string,
         token: (await this.web3.multiSignSharesEntity.ownershipTokenId(
           config,
-          this.proposal.companyAddress,
+          this.proposal.entityAddress,
         )) as number,
       };
     }
     const ownershipAddress =
       MultiSignSharesProposalData.companyOwnershipTokenCache[
-        this.proposal.companyAddress
+        this.proposal.entityAddress
       ].collection;
     const ownershipTokenId =
       MultiSignSharesProposalData.companyOwnershipTokenCache[
-        this.proposal.companyAddress
+        this.proposal.entityAddress
       ].token;
 
     await this.web3.ownershipSharesNFTCollection.totalShares(
@@ -87,7 +87,7 @@ export class MultiSignSharesProposalData extends GovernanceProposalData {
     );
     await this.web3.multiSignSharesEntity.requiredSignatures(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       this.proposal.proposalId,
       web3Batch,
       (result) => {
@@ -96,7 +96,7 @@ export class MultiSignSharesProposalData extends GovernanceProposalData {
     );
     await this.web3.multiSignSharesEntity.currentSharesSigned(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       this.proposal.proposalId,
       web3Batch,
       (result) => {
@@ -105,7 +105,7 @@ export class MultiSignSharesProposalData extends GovernanceProposalData {
     );
     await this.web3.multiSignSharesEntity.currentSharesSigned(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       this.proposal.proposalId,
       web3Batch,
       (result) => {

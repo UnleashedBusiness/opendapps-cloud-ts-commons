@@ -20,14 +20,14 @@ export class GovernanceProposalFactory {
         useCache: boolean = false,
         autoLoad: boolean = true
     ): Promise<GovernanceProposalData> {
-        if (typeof GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.companyAddress] === "undefined") {
+        if (typeof GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.entityAddress] === "undefined") {
             const deployment = await web2
                 .deployment
-                .fetch<DecentralizedEntityDeployment>(config.networkId, proposal.companyAddress);
+                .fetch<DecentralizedEntityDeployment>(config.networkId, proposal.entityAddress);
 
-            GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.companyAddress] = parseInt(deployment.type);
+            GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.entityAddress] = parseInt(deployment.type);
         }
-        const type = GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.companyAddress];
+        const type = GovernanceProposalFactory.decentralizedEntityTypeCache[proposal.entityAddress];
 
         let governanceProposal: GovernanceProposalData;
         switch (Number(type)) {

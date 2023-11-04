@@ -79,7 +79,7 @@ export class MultiSignProposalData extends GovernanceProposalData {
   ): Promise<void> {
     await this.web3.multiSignEntity.requiredRootSignatures(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       web3Batch,
       (result) => {
         this.requiredRootSignaturesCount = result;
@@ -87,7 +87,7 @@ export class MultiSignProposalData extends GovernanceProposalData {
     );
     await this.web3.multiSignEntity.requiredTotalSignatures(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       web3Batch,
       (result) => {
         this.requiredTotalSignaturesCount = result;
@@ -95,7 +95,7 @@ export class MultiSignProposalData extends GovernanceProposalData {
     );
     await this.web3.multiSignEntity.availableRootSignatures(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       web3Batch,
       (result) => {
         this.availableRootSignaturesCount = result;
@@ -103,7 +103,7 @@ export class MultiSignProposalData extends GovernanceProposalData {
     );
     await this.web3.multiSignEntity.availableTotalSignatures(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       web3Batch,
       (result) => {
         this.availableTotalSignaturesCount = result;
@@ -111,7 +111,7 @@ export class MultiSignProposalData extends GovernanceProposalData {
     );
     await this.web3.multiSignEntity.currentRootSignatures(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       this.proposal.proposalId,
       web3Batch,
       (result) => {
@@ -120,7 +120,7 @@ export class MultiSignProposalData extends GovernanceProposalData {
     );
     await this.web3.multiSignEntity.currentTotalSignatures(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       this.proposal.proposalId,
       web3Batch,
       (result) => {

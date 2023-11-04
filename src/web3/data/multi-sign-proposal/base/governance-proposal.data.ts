@@ -62,7 +62,7 @@ export abstract class GovernanceProposalData implements Web3DataInterface {
 
     await this.web3.governorInterface.proposalState(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       this.proposal.proposalId,
       web3Batch,
       (result) => {
@@ -71,7 +71,7 @@ export abstract class GovernanceProposalData implements Web3DataInterface {
     );
     await this.web3.governorInterface.proposalVoteStartBlock(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       this.proposal.proposalId,
       web3Batch,
       (result) => {
@@ -86,7 +86,7 @@ export abstract class GovernanceProposalData implements Web3DataInterface {
 
     await this.web3.governorInterface.proposalVoteEndBlock(
       config,
-      this.proposal.companyAddress,
+      this.proposal.entityAddress,
       this.proposal.proposalId,
       web3Batch,
       (result) => {
