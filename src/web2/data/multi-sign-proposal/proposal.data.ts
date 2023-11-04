@@ -1,7 +1,7 @@
 export class ProposalData {
   constructor(
     public targetChain: number = 0,
-    public companyAddress: string = "",
+    public entityAddress: string = "",
     public description: string = "",
     public proposalId: string = "",
     public methodCallList: MethodClass[] = [],
