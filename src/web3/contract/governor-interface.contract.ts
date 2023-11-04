@@ -165,7 +165,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
       governor,
       async (contract) => contract.methods.proposalState(proposalId),
       batch,
-      callback,
+      callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,
     );
   }
 
