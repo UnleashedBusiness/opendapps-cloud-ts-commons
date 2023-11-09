@@ -218,7 +218,7 @@ export class TokenLiquidityTreasuryContract extends BaseTokenAwareContract<Token
     const tokenAmountBN = new BigNumber(tokenAmount).multipliedBy(division).decimalPlaces(0);
 
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.claimOwnerRewards(tokenAmountBN.toString()),
+      contract.methods.claimOwnerRewards(tokenAmountBN.toString(10)),
     );
   }
 
@@ -231,7 +231,7 @@ export class TokenLiquidityTreasuryContract extends BaseTokenAwareContract<Token
     const tokenAmountBN = new BigNumber(tokenAmount).multipliedBy(10 ** 18).decimalPlaces(0);
 
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.removeLiquidityV2(router, weth, tokenAmountBN.toString()),
+      contract.methods.removeLiquidityV2(router, weth, tokenAmountBN.toString(10)),
     );
   }
 
@@ -243,7 +243,7 @@ export class TokenLiquidityTreasuryContract extends BaseTokenAwareContract<Token
     const tokenAmountBN = new BigNumber(tokenAmount).multipliedBy(10 ** 18).decimalPlaces(0);
 
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.swapNativeToWrapped(weth, tokenAmountBN.toString()),
+      contract.methods.swapNativeToWrapped(weth, tokenAmountBN.toString(10)),
     );
   }
 
@@ -255,7 +255,7 @@ export class TokenLiquidityTreasuryContract extends BaseTokenAwareContract<Token
     const tokenAmountBN = new BigNumber(tokenAmount).multipliedBy(10 ** 18).decimalPlaces(0);
 
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.swapWrappedToNative(weth, tokenAmountBN.toString()),
+      contract.methods.swapWrappedToNative(weth, tokenAmountBN.toString(10)),
     );
   }
 
@@ -268,7 +268,7 @@ export class TokenLiquidityTreasuryContract extends BaseTokenAwareContract<Token
     const tokenAmountBN = new BigNumber(tokenAmount).multipliedBy(10 ** 18).decimalPlaces(0);
 
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.swapWrappedNativeForToken(router, weth, tokenAmountBN.toString()),
+      contract.methods.swapWrappedNativeForToken(router, weth, tokenAmountBN.toString(10)),
     );
   }
 
@@ -281,7 +281,7 @@ export class TokenLiquidityTreasuryContract extends BaseTokenAwareContract<Token
     const tokenAmountBN = new BigNumber(tokenAmount).multipliedBy(10 ** 18).decimalPlaces(0);
 
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.swapNativeForToken(router, weth, tokenAmountBN.toString()),
+      contract.methods.swapNativeForToken(router, weth, tokenAmountBN.toString(10)),
     );
   }
 
@@ -291,7 +291,7 @@ export class TokenLiquidityTreasuryContract extends BaseTokenAwareContract<Token
     const tokenAmountBN = new BigNumber(tokenAmount).multipliedBy(division).decimalPlaces(0);
 
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.burn(tokenAmountBN.toString()),
+      contract.methods.burn(tokenAmountBN.toString(10)),
     );
   }
 }

@@ -476,7 +476,7 @@ export class StakingAsAServiceContract extends BaseTokenAwareContract<StakingAsA
     max = max.multipliedBy(division).decimalPlaces(0);
 
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.setMinMaxStake(min.toString(), max.toString()),
+      contract.methods.setMinMaxStake(min.toString(10), max.toString(10)),
     );
   }
 
@@ -484,7 +484,7 @@ export class StakingAsAServiceContract extends BaseTokenAwareContract<StakingAsA
     const division = await this.tokenDivision(this.walletConnection.blockchain, token);
     maxRewardsPerEpoch = maxRewardsPerEpoch.multipliedBy(division).decimalPlaces(0);
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.setEpochMaxRewards(token, maxRewardsPerEpoch.toString()),
+      contract.methods.setEpochMaxRewards(token, maxRewardsPerEpoch.toString(10)),
     );
   }
 
@@ -498,7 +498,7 @@ export class StakingAsAServiceContract extends BaseTokenAwareContract<StakingAsA
       .multipliedBy(10 ** 12)
       .decimalPlaces(0);
     return this.buildMethodRunnableMulti(contractAddress, (contract, _) =>
-      contract.methods.enableLocks(minEpochLength, maxEpochLength, rewardsRateBN.toString()),
+      contract.methods.enableLocks(minEpochLength, maxEpochLength, rewardsRateBN.toString(10)),
     );
   }
 
@@ -510,14 +510,14 @@ export class StakingAsAServiceContract extends BaseTokenAwareContract<StakingAsA
     const token = await this.getTokenForStaking(this.walletConnection.blockchain, contractAddress);
     const division = await this.tokenDivision(this.walletConnection.blockchain, token);
     amount = amount.multipliedBy(division);
-    await this.runMethodConnectedMulti(contractAddress, (contract, _) => contract.methods.deposit(amount.toString()));
+    await this.runMethodConnectedMulti(contractAddress, (contract, _) => contract.methods.deposit(amount.toString(10)));
   }
 
   public async withdraw(contractAddress: string, amount: BigNumber) {
     const token = await this.getTokenForStaking(this.walletConnection.blockchain, contractAddress);
     const division = await this.tokenDivision(this.walletConnection.blockchain, token);
     amount = amount.multipliedBy(division);
-    await this.runMethodConnectedMulti(contractAddress, (contract, _) => contract.methods.withdraw(amount.toString()));
+    await this.runMethodConnectedMulti(contractAddress, (contract, _) => contract.methods.withdraw(amount.toString(10)));
   }
 
   public async lock(contractAddress: string, epochs: number) {

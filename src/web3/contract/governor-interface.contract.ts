@@ -44,7 +44,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
       async (contract, _) =>
         contract.methods.executeMethodCalls(
           targets,
-          ValuesBN.map((x) => x.toString()),
+          ValuesBN.map((x) => x.toString(10)),
           calldatas,
           descriptionHash,
         ),
@@ -64,7 +64,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
     return this.buildMethodRunnableMulti(governor, async (contract, _) =>
       contract.methods.makeProposal(
         targets,
-        ValuesBN.map((x) => x.toString()),
+        ValuesBN.map((x) => x.toString(10)),
         calldatas,
         description,
       ),
@@ -135,7 +135,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
     callback?: (result: string) => void,
   ) {
     const valuesStrings = values.map((x) =>
-      new BigNumber(x).multipliedBy(DefaultEVMNativeTokenDecimals).toString(),
+      new BigNumber(x).multipliedBy(DefaultEVMNativeTokenDecimals).toString(10),
     );
 
     return this.getViewMulti(

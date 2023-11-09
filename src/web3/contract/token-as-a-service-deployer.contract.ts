@@ -73,10 +73,10 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
             (contract, _) => contract.methods.deployInflationaryToken(
                 name,
                 ticker,
-                supplyBN.toString(),
+                supplyBN.toString(10),
                 initialSupplyPercent,
                 rewardRounds, blockPerCycle,
-                ownerBN.toString(),
+                ownerBN.toString(10),
                 metadataUrl,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
@@ -106,8 +106,8 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
             (contract, _) => contract.methods.deployHardCapToken(
                 name,
                 ticker,
-                supplyBN.toString(),
-                ownerBN.toString(),
+                supplyBN.toString(10),
+                ownerBN.toString(10),
                 complexTax,
                 metadataUrl,
                 refCode !== undefined
@@ -133,7 +133,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
             (contract, _) => contract.methods.deployBasicToken(
                 name,
                 ticker,
-                supplyBN.toString(),
+                supplyBN.toString(10),
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
                     : '0x'
@@ -161,8 +161,8 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 router,
                 token,
                 treasury,
-                tokenAmountBN.toString(),
-                nativeAmountBN.toString()
+                tokenAmountBN.toString(10),
+                nativeAmountBN.toString(10)
             ),
             async () => {
             },
@@ -188,8 +188,8 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                     router,
                     token,
                     treasury,
-                    tokenAmountBN.toString(),
-                    nativeAmountBN.toString()
+                    tokenAmountBN.toString(10),
+                    nativeAmountBN.toString(10)
                 ),
             async () => {
             },

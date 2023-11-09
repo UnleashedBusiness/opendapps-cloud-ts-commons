@@ -242,7 +242,7 @@ export class DymanicTokenomicsContractService extends BaseTokenAwareContract<Dyn
     const amountBN = new BigNumber(amount).multipliedBy(await this.tokenDivision(this.walletConnection.blockchain, tokenAddress));
 
     return this.buildMethodRunnableMulti(contractAddress, async (contract1) =>
-      contract1.methods.setMaxWalletHoldAmount(amountBN.toString()),
+      contract1.methods.setMaxWalletHoldAmount(amountBN.toString(10)),
     );
   }
 
@@ -250,7 +250,7 @@ export class DymanicTokenomicsContractService extends BaseTokenAwareContract<Dyn
     const amountBN = new BigNumber(amount).multipliedBy(await this.tokenDivision(this.walletConnection.blockchain, tokenAddress));
 
     return this.buildMethodRunnableMulti(contractAddress, async (contract1) =>
-      contract1.methods.setMaxTransactionAmount(amountBN.toString()),
+      contract1.methods.setMaxTransactionAmount(amountBN.toString(10)),
     );
   }
 
