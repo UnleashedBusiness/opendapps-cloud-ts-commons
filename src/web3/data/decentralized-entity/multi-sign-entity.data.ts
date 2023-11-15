@@ -70,6 +70,8 @@ export class MultiSignEntityData extends BaseDecentralizedEntityData {
     config: BlockchainDefinition,
     web3Batch?: Web3BatchRequest,
   ): Promise<void> {
+    this._roots = [];
+    this._leafs = [];
     for (let i = 0; i < this._teamMembers.length; i++) {
       await this.web3Services.multiSignEntity.hasRole(
         config,
