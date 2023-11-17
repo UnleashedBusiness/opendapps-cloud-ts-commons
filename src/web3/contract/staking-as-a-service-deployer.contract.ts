@@ -26,7 +26,7 @@ export class StakingAsAServiceDeployerContract extends BaseMultiChainContract<St
       contractAddress,
       (contract, connectedAddress) => contract.methods.deploy(
         tokenAddress,
-        refCode !== undefined ? Web3.utils.sha3(refCode) : ''
+        refCode !== undefined ? Web3.utils.sha3(refCode) : '0x0'
       ),
       async () => {},
       async () => value.multipliedBy(10 ** 18)
