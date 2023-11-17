@@ -3,7 +3,7 @@ import {
     TokenAsAServiceDeployerAbiFunctional
 } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
-    BaseTokenAwareContract, BlockchainDefinition,
+    BaseTokenAwareContract, BlockchainDefinition, EmptyAddress,
     Erc20TokenContract, MethodRunnable, ReadOnlyWeb3Connection,
     TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
@@ -80,7 +80,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 metadataUrl,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : []
+                    : EmptyAddress
             ),
             async () => {
             },
@@ -112,7 +112,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 metadataUrl,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : []
+                    : EmptyAddress
             ),
             async () => {
             },
@@ -136,7 +136,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 supplyBN.toString(10),
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : []
+                    : EmptyAddress
             ),
             async () => {
             },

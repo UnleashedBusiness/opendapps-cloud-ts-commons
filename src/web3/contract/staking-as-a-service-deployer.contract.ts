@@ -4,7 +4,7 @@ import {
   StakingAsAServiceDeployerAbiFunctional
 } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
-  BaseMultiChainContract, ReadOnlyWeb3Connection,
+  BaseMultiChainContract, EmptyAddress, ReadOnlyWeb3Connection,
   TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
 import Web3 from "web3";
@@ -26,7 +26,7 @@ export class StakingAsAServiceDeployerContract extends BaseMultiChainContract<St
       contractAddress,
       (contract, connectedAddress) => contract.methods.deploy(
         tokenAddress,
-        refCode !== undefined ? Web3.utils.sha3(refCode) : []
+        refCode !== undefined ? Web3.utils.sha3(refCode) : EmptyAddress
       ),
       async () => {},
       async () => value.multipliedBy(10 ** 18)

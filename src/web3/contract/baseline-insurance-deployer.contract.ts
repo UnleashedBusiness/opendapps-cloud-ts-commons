@@ -2,7 +2,7 @@ import {
     BaselineInsuranceServiceDeployerAbi, BaselineInsuranceServiceDeployerAbiFunctional
 } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
-    BaseTokenAwareContract,
+    BaseTokenAwareContract, EmptyAddress,
     Erc20TokenContract, ReadOnlyWeb3Connection,
     TransactionRunningHelperService
 } from "@unleashed-business/ts-web3-commons";
@@ -34,7 +34,7 @@ export class BaselineInsuranceDeployerContract extends BaseTokenAwareContract<Ba
                 backingToken,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : []
+                    : EmptyAddress
             ),
             async () => {
             },
@@ -54,7 +54,7 @@ export class BaselineInsuranceDeployerContract extends BaseTokenAwareContract<Ba
                 backingToken,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : []
+                    : EmptyAddress
             ),
             async () => {
             },
