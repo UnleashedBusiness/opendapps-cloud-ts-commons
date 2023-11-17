@@ -34,7 +34,7 @@ export class BaselineInsuranceDeployerContract extends BaseTokenAwareContract<Ba
                 backingToken,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : '0x'
+                    : ''
             ),
             async () => {
             },
@@ -54,7 +54,7 @@ export class BaselineInsuranceDeployerContract extends BaseTokenAwareContract<Ba
                 backingToken,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : '0x'
+                    : ''
             ),
             async () => {
             },

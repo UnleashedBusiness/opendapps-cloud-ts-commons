@@ -80,7 +80,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 metadataUrl,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : '0x'
+                    : ''
             ),
             async () => {
             },
@@ -112,7 +112,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 metadataUrl,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : '0x'
+                    : ''
             ),
             async () => {
             },
@@ -136,7 +136,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 supplyBN.toString(10),
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : '0x'
+                    : ''
             ),
             async () => {
             },
