@@ -1,0 +1,1 @@
+export const EmptyBytes32 = new Array(32).fill(0) as number[];

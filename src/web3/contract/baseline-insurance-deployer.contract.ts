@@ -8,6 +8,7 @@ import {
 } from "@unleashed-business/ts-web3-commons";
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
+import { EmptyBytes32 } from "../../utils/utils.const";
 
 export class BaselineInsuranceDeployerContract extends BaseTokenAwareContract<BaselineInsuranceServiceDeployerAbiFunctional> {
     public static readonly GROUP_ASSET_BACKING = Web3.utils.soliditySha3("AseetBacking")!;
@@ -34,7 +35,7 @@ export class BaselineInsuranceDeployerContract extends BaseTokenAwareContract<Ba
                 backingToken,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : EmptyAddress
+                    : EmptyBytes32
             ),
             async () => {
             },
@@ -54,7 +55,7 @@ export class BaselineInsuranceDeployerContract extends BaseTokenAwareContract<Ba
                 backingToken,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : EmptyAddress
+                    : EmptyBytes32
             ),
             async () => {
             },

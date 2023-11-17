@@ -10,6 +10,7 @@ import {
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
 import {Web3BatchRequest} from "web3-core";
+import { EmptyBytes32 } from "../../utils/utils.const";
 
 export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<TokenAsAServiceDeployerAbiFunctional> {
     public static readonly GROUP_TOKEN = Web3.utils.soliditySha3("Token")!;
@@ -80,7 +81,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 metadataUrl,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : EmptyAddress
+                    : EmptyBytes32
             ),
             async () => {
             },
@@ -112,7 +113,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 metadataUrl,
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : EmptyAddress
+                    : EmptyBytes32
             ),
             async () => {
             },
@@ -136,7 +137,7 @@ export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<Toke
                 supplyBN.toString(10),
                 refCode !== undefined
                     ? Web3.utils.sha3(refCode)
-                    : EmptyAddress
+                    : EmptyBytes32
             ),
             async () => {
             },

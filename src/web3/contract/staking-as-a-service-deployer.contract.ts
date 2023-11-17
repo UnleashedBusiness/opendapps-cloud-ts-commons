@@ -9,6 +9,7 @@ import {
 } from "@unleashed-business/ts-web3-commons";
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
+import { EmptyBytes32 } from "../../utils/utils.const";
 
 export class StakingAsAServiceDeployerContract extends BaseMultiChainContract<StakingAsAServiceDeployerAbiFunctional> {
   public static readonly GROUP_STAKING = Web3.utils.soliditySha3("Staking")!;
@@ -26,7 +27,7 @@ export class StakingAsAServiceDeployerContract extends BaseMultiChainContract<St
       contractAddress,
       (contract, connectedAddress) => contract.methods.deploy(
         tokenAddress,
-        refCode !== undefined ? Web3.utils.sha3(refCode) : EmptyAddress
+        refCode !== undefined ? Web3.utils.sha3(refCode) : EmptyBytes32
       ),
       async () => {},
       async () => value.multipliedBy(10 ** 18)
