@@ -1,12 +1,11 @@
 import { ContractDeployerAbi, ContractDeployerAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
   BaseTokenAwareContract,
-  BlockchainDefinition, EmptyAddress,
-  Erc20TokenContract,
+  BlockchainDefinition, ContractToolkitService, EmptyAddress,
+  Erc20TokenContract
 } from "@unleashed-business/ts-web3-commons";
 import { Web3BatchRequest } from "web3-core";
 import BigNumber from "bignumber.js";
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 
 export class ContractDeployerContract extends BaseTokenAwareContract<ContractDeployerAbiFunctional> {
   constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {

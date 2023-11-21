@@ -2,11 +2,11 @@ import { StakingAsAServiceAbi, StakingAsAServiceAbiFunctional } from '@unleashed
 import {
   BaseTokenAwareContract,
   BlockchainDefinition,
+  ContractToolkitService,
   Erc20TokenContract,
   MethodRunnable,
+  NumericResult,
 } from '@unleashed-business/ts-web3-commons';
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
-import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
 import BigNumber from 'bignumber.js';
 import { Web3BatchRequest } from 'web3-core';
 
@@ -512,7 +512,9 @@ export class StakingAsAServiceContract extends BaseTokenAwareContract<StakingAsA
     const token = await this.getTokenForStaking(this.walletConnection.blockchain, contractAddress);
     const division = await this.tokenDivision(this.walletConnection.blockchain, token);
     amount = amount.multipliedBy(division);
-    await this.runMethodConnectedMulti(contractAddress, (contract, _) => contract.methods.withdraw(amount.toString(10)));
+    await this.runMethodConnectedMulti(contractAddress, (contract, _) =>
+      contract.methods.withdraw(amount.toString(10)),
+    );
   }
 
   public async lock(contractAddress: string, epochs: number) {

@@ -2,11 +2,11 @@ import { AssetBackingAbi, AssetBackingAbiFunctional } from '@unleashed-business/
 import {
   BaseTokenAwareContract,
   BlockchainDefinition,
+  ContractToolkitService,
   Erc20TokenContract,
 } from '@unleashed-business/ts-web3-commons';
 import { Web3BatchRequest } from 'web3-core';
 import BigNumber from 'bignumber.js';
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 
 export class AssetBackingContract extends BaseTokenAwareContract<AssetBackingAbiFunctional> {
   constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {

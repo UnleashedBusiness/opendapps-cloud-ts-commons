@@ -1,9 +1,9 @@
 import { ReferralsEngineAbi, ReferralsEngineAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
-    BaseMultiChainContract,
-    BlockchainDefinition
-} from "@unleashed-business/ts-web3-commons";
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
+  BaseMultiChainContract,
+  BlockchainDefinition,
+  ContractToolkitService,
+} from '@unleashed-business/ts-web3-commons';
 import Web3 from "web3";
 import {Web3BatchRequest} from "web3-core";
 

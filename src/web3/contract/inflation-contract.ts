@@ -1,119 +1,119 @@
-import { InflationAbi, InflationAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
+import { InflationAbi, InflationAbiFunctional } from '@unleashed-business/opendapps-cloud-ts-abi';
 import {
-    BaseTokenAwareContract, BlockchainDefinition,
-    Erc20TokenContract
-} from "@unleashed-business/ts-web3-commons";
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
-import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
-import {Web3BatchRequest} from "web3-core";
+  BaseTokenAwareContract,
+  BlockchainDefinition,
+  ContractToolkitService,
+  Erc20TokenContract,
+  NumericResult,
+} from '@unleashed-business/ts-web3-commons';
+import { Web3BatchRequest } from 'web3-core';
 
 export class InflationContract extends BaseTokenAwareContract<InflationAbiFunctional> {
-    constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {
-        super(token, toolkit);
-    }
+  constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {
+    super(token, toolkit);
+  }
 
-    protected override getAbi(): typeof InflationAbi {
-        return InflationAbi;
-    }
+  protected override getAbi(): typeof InflationAbi {
+    return InflationAbi;
+  }
 
-    public async tokenOfTokenomics(
-        config: BlockchainDefinition,
-        address: string,
-         batch?: Web3BatchRequest,
-        callback?: (result: string) => void
-    ) {
-        return this.getPropertyMulti(config, address, 'token', batch, callback);
-    }
+  public async tokenOfTokenomics(
+    config: BlockchainDefinition,
+    address: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: string) => void,
+  ) {
+    return this.getPropertyMulti(config, address, 'token', batch, callback);
+  }
 
-    public async maxCycles(
-        config: BlockchainDefinition,
-        address: string,
-         batch?: Web3BatchRequest,
-        callback?: (result: number) => void
-    ) {
-        return this.getPropertyMulti(config, address, 'maxCycles', batch, callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,);
-    }
+  public async maxCycles(
+    config: BlockchainDefinition,
+    address: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: number) => void,
+  ) {
+    return this.getPropertyMulti(
+      config,
+      address,
+      'maxCycles',
+      batch,
+      callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,
+    );
+  }
 
-    public async currentRewardsCycle(
-        config: BlockchainDefinition,
-        address: string,
-         batch?: Web3BatchRequest,
-        callback?: (result: number) => void
-    ) {
-        return this.getPropertyMulti(config, address, 'currentRewardsCycle', batch, callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,);
-    }
+  public async currentRewardsCycle(
+    config: BlockchainDefinition,
+    address: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: number) => void,
+  ) {
+    return this.getPropertyMulti(
+      config,
+      address,
+      'currentRewardsCycle',
+      batch,
+      callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,
+    );
+  }
 
-    public async blocksPerCycle(
-        config: BlockchainDefinition,
-        address: string,
-         batch?: Web3BatchRequest,
-        callback?: (result: number) => void
-    ) {
-        return this.getPropertyMulti(config, address, 'blocksPerCycle', batch, callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,);
-    }
+  public async blocksPerCycle(
+    config: BlockchainDefinition,
+    address: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: number) => void,
+  ) {
+    return this.getPropertyMulti(
+      config,
+      address,
+      'blocksPerCycle',
+      batch,
+      callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,
+    );
+  }
 
-    public async getPayees(
-        config: BlockchainDefinition,
-        address: string,
-         batch?: Web3BatchRequest,
-        callback?: (result: string[]) => void
-    ) {
-        return this.getViewMulti(
-            config,
-            address,
-            async (contract) => contract.methods.getPayees(),
-            batch,
-            callback);
-    }
+  public async getPayees(
+    config: BlockchainDefinition,
+    address: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: string[]) => void,
+  ) {
+    return this.getViewMulti(config, address, async (contract) => contract.methods.getPayees(), batch, callback);
+  }
 
-    public async payeePercent(
-        config: BlockchainDefinition,
-        address: string,
-        wallet: string,
-         batch?: Web3BatchRequest,
-        callback?: (result: number) => void
-    ) {
-        return this.getViewMulti(
-            config,
-            address,
-            async (contract) => contract.methods.payeePercent(wallet),
-            batch,
-          callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,);
-    }
+  public async payeePercent(
+    config: BlockchainDefinition,
+    address: string,
+    wallet: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: number) => void,
+  ) {
+    return this.getViewMulti(
+      config,
+      address,
+      async (contract) => contract.methods.payeePercent(wallet),
+      batch,
+      callback !== undefined ? (result: NumericResult) => callback(this.wrap(result).toNumber()) : undefined,
+    );
+  }
 
-    public async controller(
-        config: BlockchainDefinition,
-        address: string,
-         batch?: Web3BatchRequest,
-        callback?: (result: string) => void
-    ) {
-        return this.getViewMulti(
-          config,
-          address,
-          async (contract) => contract.methods.getController(),
-          batch,
-          callback,
-        );
-    }
+  public async controller(
+    config: BlockchainDefinition,
+    address: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: string) => void,
+  ) {
+    return this.getViewMulti(config, address, async (contract) => contract.methods.getController(), batch, callback);
+  }
 
-    public addPayee(address: string, account: string, shares: number) {
-        return this.buildMethodRunnableMulti(
-            address,
-            async (contract, _) => contract.methods.addPayee(account, shares)
-        );
-    }
+  public addPayee(address: string, account: string, shares: number) {
+    return this.buildMethodRunnableMulti(address, async (contract, _) => contract.methods.addPayee(account, shares));
+  }
 
-    public changePayeeShare(address: string, account: string, shares: number) {
-        return this.buildMethodRunnableMulti(
-            address,
-            async (contract, _) => contract.methods.changePayee(account, shares)
-        );
-    }
+  public changePayeeShare(address: string, account: string, shares: number) {
+    return this.buildMethodRunnableMulti(address, async (contract, _) => contract.methods.changePayee(account, shares));
+  }
 
-    public removePayee(address: string, account: string) {
-        return this.buildMethodRunnableMulti(
-            address,
-            async (contract, _) => contract.methods.removePayee(account)
-        );
-    }
+  public removePayee(address: string, account: string) {
+    return this.buildMethodRunnableMulti(address, async (contract, _) => contract.methods.removePayee(account));
+  }
 }

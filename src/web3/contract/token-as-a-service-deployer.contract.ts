@@ -3,15 +3,16 @@ import {
     TokenAsAServiceDeployerAbiFunctional
 } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
-    BaseTokenAwareContract, BlockchainDefinition, EmptyAddress,
-    Erc20TokenContract, MethodRunnable, ReadOnlyWeb3Connection,
-    TransactionRunningHelperService
-} from "@unleashed-business/ts-web3-commons";
+  BaseTokenAwareContract,
+  BlockchainDefinition,
+  ContractToolkitService,
+  Erc20TokenContract,
+  MethodRunnable,
+} from '@unleashed-business/ts-web3-commons';
 import Web3 from "web3";
 import BigNumber from "bignumber.js";
 import {Web3BatchRequest} from "web3-core";
 import { EmptyBytes32 } from "../../utils/utils.const";
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 
 export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<TokenAsAServiceDeployerAbiFunctional> {
     public static readonly GROUP_TOKEN = Web3.utils.soliditySha3("Token")!;

@@ -1,10 +1,6 @@
 import { DecentralizedEntityInterfaceContract } from './decentralized-entity-interface.contract';
 import { MultiSignEntityAbi, MultiSignEntityAbiFunctional } from '@unleashed-business/opendapps-cloud-ts-abi';
-import {
-  BlockchainDefinition,
-} from '@unleashed-business/ts-web3-commons';
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
-import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
+import { BlockchainDefinition, ContractToolkitService, NumericResult } from '@unleashed-business/ts-web3-commons';
 import { Web3BatchRequest } from 'web3-core';
 
 export class MultiSignEntityContract extends DecentralizedEntityInterfaceContract<MultiSignEntityAbiFunctional> {

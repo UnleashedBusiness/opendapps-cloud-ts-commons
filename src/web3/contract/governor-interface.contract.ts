@@ -1,17 +1,17 @@
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 import {
   ProposalGovernorInterfaceAbi,
-  ProposalGovernorInterfaceAbiFunctional
-} from "@unleashed-business/opendapps-cloud-ts-abi";
+  ProposalGovernorInterfaceAbiFunctional,
+} from '@unleashed-business/opendapps-cloud-ts-abi';
 import {
   BaseMultiChainContract,
   BlockchainDefinition,
+  ContractToolkitService,
   DefaultEVMNativeTokenDecimals,
-  MethodRunnable
-} from "@unleashed-business/ts-web3-commons";
-import {Web3BatchRequest} from "web3-core";
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
-import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
+  MethodRunnable,
+  NumericResult,
+} from '@unleashed-business/ts-web3-commons';
+import { Web3BatchRequest } from 'web3-core';
 
 export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGovernorInterfaceAbiFunctional> {
   constructor(toolkit: ContractToolkitService) {
@@ -49,13 +49,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
     );
   }
 
-  public propose(
-    governor: string,
-    targets: string[],
-    values: BigNumber[],
-    calldatas: string[],
-    description: string,
-  ) {
+  public propose(governor: string, targets: string[], values: BigNumber[], calldatas: string[], description: string) {
     const ValuesBN = values.map((x) => new BigNumber(x).multipliedBy(10 ** 18));
     return this.buildMethodRunnableMulti(governor, async (contract, _) =>
       contract.methods.makeProposal(
@@ -68,9 +62,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
   }
 
   public voteForProposal(governor: string, proposalId: string): MethodRunnable {
-    return this.buildMethodRunnableMulti(governor, async (contract, _) =>
-      contract.methods.voteForProposal(proposalId),
-    );
+    return this.buildMethodRunnableMulti(governor, async (contract, _) => contract.methods.voteForProposal(proposalId));
   }
 
   public async requireProposal(
@@ -79,13 +71,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
     batch?: Web3BatchRequest,
     callback?: (result: boolean) => void,
   ) {
-    return this.getViewMulti(
-      config,
-      governor,
-      async (contract) => contract.methods.requireProposal(),
-      batch,
-      callback,
-    );
+    return this.getViewMulti(config, governor, async (contract) => contract.methods.requireProposal(), batch, callback);
   }
 
   public async canPropose(
@@ -111,13 +97,7 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
     batch?: Web3BatchRequest,
     callback?: (result: boolean) => void,
   ) {
-    return this.getViewMulti(
-      config,
-      governor,
-      async (contract) => contract.methods.canVote(wallet),
-      batch,
-      callback,
-    );
+    return this.getViewMulti(config, governor, async (contract) => contract.methods.canVote(wallet), batch, callback);
   }
 
   public async buildProposalId(
@@ -130,20 +110,12 @@ export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGo
     batch?: Web3BatchRequest,
     callback?: (result: string) => void,
   ) {
-    const valuesStrings = values.map((x) =>
-      new BigNumber(x).multipliedBy(DefaultEVMNativeTokenDecimals).toString(10),
-    );
+    const valuesStrings = values.map((x) => new BigNumber(x).multipliedBy(DefaultEVMNativeTokenDecimals).toString(10));
 
     return this.getViewMulti(
       config,
       governor,
-      async (contract) =>
-        contract.methods.buildProposalId(
-          targets,
-          valuesStrings,
-          calldatas,
-          descriptionHash,
-        ),
+      async (contract) => contract.methods.buildProposalId(targets, valuesStrings, calldatas, descriptionHash),
       batch,
       callback,
     );

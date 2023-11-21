@@ -5,11 +5,11 @@ import {
 import {
   BaseTokenAwareContract,
   BlockchainDefinition,
+  ContractToolkitService,
   Erc20TokenContract,
   MethodRunnable,
+  NumericResult,
 } from '@unleashed-business/ts-web3-commons';
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
-import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
 import BigNumber from 'bignumber.js';
 import { Web3BatchRequest } from 'web3-core';
 

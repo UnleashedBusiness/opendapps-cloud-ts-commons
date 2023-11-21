@@ -5,8 +5,8 @@ import {
 import {
   BaseMultiChainContract,
   BlockchainDefinition,
+  ContractToolkitService,
 } from '@unleashed-business/ts-web3-commons';
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 import { Web3BatchRequest } from 'web3-core';
 
 export class DecentralizedEntityInterfaceContract<

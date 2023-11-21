@@ -2,11 +2,14 @@ import {
   BaselineInsuranceServiceDeployerAbi,
   BaselineInsuranceServiceDeployerAbiFunctional,
 } from '@unleashed-business/opendapps-cloud-ts-abi';
-import { BaseTokenAwareContract, Erc20TokenContract } from '@unleashed-business/ts-web3-commons';
+import {
+  BaseTokenAwareContract,
+  ContractToolkitService,
+  Erc20TokenContract
+} from "@unleashed-business/ts-web3-commons";
 import Web3 from 'web3';
 import BigNumber from 'bignumber.js';
 import { EmptyBytes32 } from '../../utils/utils.const';
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 
 export class BaselineInsuranceDeployerContract extends BaseTokenAwareContract<BaselineInsuranceServiceDeployerAbiFunctional> {
   public static readonly GROUP_ASSET_BACKING = Web3.utils.soliditySha3('AseetBacking')!;

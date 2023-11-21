@@ -3,11 +3,11 @@ import { DynamicTokenomicsAbi, DynamicTokenomicsAbiFunctional } from '@unleashed
 import {
   BaseTokenAwareContract,
   BlockchainDefinition,
+  ContractToolkitService,
   Erc20TokenContract,
+  NumericResult,
 } from '@unleashed-business/ts-web3-commons';
 import { Web3BatchRequest } from 'web3-core';
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
-import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
 
 export class DymanicTokenomicsContractService extends BaseTokenAwareContract<DynamicTokenomicsAbiFunctional> {
   constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {
@@ -234,7 +234,9 @@ export class DymanicTokenomicsContractService extends BaseTokenAwareContract<Dyn
   }
 
   public async setMaxWalletHoldAmount(contractAddress: string, tokenAddress: string, amount: string) {
-    const amountBN = new BigNumber(amount).multipliedBy(await this.tokenDivision(this.walletConnection.blockchain, tokenAddress));
+    const amountBN = new BigNumber(amount).multipliedBy(
+      await this.tokenDivision(this.walletConnection.blockchain, tokenAddress),
+    );
 
     return this.buildMethodRunnableMulti(contractAddress, async (contract1) =>
       contract1.methods.setMaxWalletHoldAmount(amountBN.toString(10)),
@@ -242,7 +244,9 @@ export class DymanicTokenomicsContractService extends BaseTokenAwareContract<Dyn
   }
 
   public async setMaxTransactionAmount(contractAddress: string, tokenAddress: string, amount: string) {
-    const amountBN = new BigNumber(amount).multipliedBy(await this.tokenDivision(this.walletConnection.blockchain, tokenAddress));
+    const amountBN = new BigNumber(amount).multipliedBy(
+      await this.tokenDivision(this.walletConnection.blockchain, tokenAddress),
+    );
 
     return this.buildMethodRunnableMulti(contractAddress, async (contract1) =>
       contract1.methods.setMaxTransactionAmount(amountBN.toString(10)),

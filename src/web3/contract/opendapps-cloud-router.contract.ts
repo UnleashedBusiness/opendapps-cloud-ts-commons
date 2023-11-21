@@ -1,15 +1,14 @@
 import {
   BaseMultiChainContract,
   BlockchainDefinition,
-  ReadOnlyWeb3Connection,
-  TransactionRunningHelperService,
-} from "@unleashed-business/ts-web3-commons";
+  ContractToolkitService,
+} from '@unleashed-business/ts-web3-commons';
 import { Web3BatchRequest } from "web3-core";
 import {
   OpenDAppsCloudRouterAbi,
-  OpenDAppsCloudRouterAbiFunctional
-} from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/opendapps-cloud-router.abi";
-import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
+  OpenDAppsCloudRouterAbiFunctional,
+} from '@unleashed-business/opendapps-cloud-ts-abi/dist/abi/opendapps-cloud-router.abi';
+
 
 export class OpenDAppsCloudRouterContract extends BaseMultiChainContract<OpenDAppsCloudRouterAbiFunctional> {
   private propertyValueCache: Map<string, any> = new Map<string, any>();
