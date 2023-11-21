@@ -1,17 +1,15 @@
 import { ReferralsEngineAbi, ReferralsEngineAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BaseMultiChainContract,
-    BlockchainDefinition,
-    ReadOnlyWeb3Connection,
-    TransactionRunningHelperService
+    BlockchainDefinition
 } from "@unleashed-business/ts-web3-commons";
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 import Web3 from "web3";
 import {Web3BatchRequest} from "web3-core";
 
 export class ReferralEngineContract extends BaseMultiChainContract<ReferralsEngineAbiFunctional> {
-
-    constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
-        super(web3Connection, transactionHelper);
+    constructor(toolkit: ContractToolkitService) {
+        super(toolkit);
     }
 
     protected getAbi(): any {

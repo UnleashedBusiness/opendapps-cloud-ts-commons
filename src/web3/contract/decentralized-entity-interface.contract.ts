@@ -1,24 +1,19 @@
 import {
   DecentralizedEntityInterfaceAbi,
   DecentralizedEntityInterfaceAbiFunctional,
-} from "@unleashed-business/opendapps-cloud-ts-abi";
+} from '@unleashed-business/opendapps-cloud-ts-abi';
 import {
   BaseMultiChainContract,
   BlockchainDefinition,
-  ReadOnlyWeb3Connection,
-  TransactionRunningHelperService,
-} from "@unleashed-business/ts-web3-commons";
-import { Web3BatchRequest } from "web3-core";
+} from '@unleashed-business/ts-web3-commons';
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
+import { Web3BatchRequest } from 'web3-core';
 
 export class DecentralizedEntityInterfaceContract<
-  FunctionalAbi extends
-    DecentralizedEntityInterfaceAbiFunctional = DecentralizedEntityInterfaceAbiFunctional,
+  FunctionalAbi extends DecentralizedEntityInterfaceAbiFunctional = DecentralizedEntityInterfaceAbiFunctional,
 > extends BaseMultiChainContract<FunctionalAbi> {
-  constructor(
-    web3Connection: ReadOnlyWeb3Connection,
-    transactionHelper: TransactionRunningHelperService,
-  ) {
-    super(web3Connection, transactionHelper);
+  constructor(toolkit: ContractToolkitService) {
+    super(toolkit);
   }
 
   protected getAbi(): typeof DecentralizedEntityInterfaceAbi {
@@ -31,13 +26,7 @@ export class DecentralizedEntityInterfaceContract<
     batch?: Web3BatchRequest,
     callback?: (result: string) => void,
   ) {
-    return this.getViewMulti(
-      config,
-      entityAddress,
-      async (contract) => contract.methods.name(),
-      batch,
-      callback,
-    );
+    return this.getViewMulti(config, entityAddress, async (contract) => contract.methods.name(), batch, callback);
   }
 
   public async metadataUrl(

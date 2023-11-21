@@ -4,19 +4,14 @@ import {
   BaseTokenAwareContract,
   BlockchainDefinition,
   Erc20TokenContract,
-  NumericResult,
-  ReadOnlyWeb3Connection,
-  TransactionRunningHelperService,
 } from '@unleashed-business/ts-web3-commons';
 import { Web3BatchRequest } from 'web3-core';
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
+import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
 
 export class DymanicTokenomicsContractService extends BaseTokenAwareContract<DynamicTokenomicsAbiFunctional> {
-  constructor(
-    token: Erc20TokenContract,
-    web3Connection: ReadOnlyWeb3Connection,
-    transactionHelper: TransactionRunningHelperService,
-  ) {
-    super(token, web3Connection, transactionHelper);
+  constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {
+    super(token, toolkit);
   }
 
   protected override getAbi(): typeof DynamicTokenomicsAbi {

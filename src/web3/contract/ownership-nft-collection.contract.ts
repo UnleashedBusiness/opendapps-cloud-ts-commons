@@ -4,13 +4,13 @@ import {
 } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BlockchainDefinition,
-    Erc721Contract, ReadOnlyWeb3Connection,
-    TransactionRunningHelperService
+    Erc721Contract,
 } from "@unleashed-business/ts-web3-commons";
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 
 export class OwnershipNftCollectionContract extends Erc721Contract<OwnershipNFTCollectionAbiFunctional> {
-    constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
-        super({web3Connection, transactionHelper});
+    constructor(toolkit: ContractToolkitService) {
+        super(toolkit);
     }
 
     protected override getAbi(): any {

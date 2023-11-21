@@ -1,14 +1,15 @@
 import { InflationAbi, InflationAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
     BaseTokenAwareContract, BlockchainDefinition,
-    Erc20TokenContract, NumericResult, ReadOnlyWeb3Connection,
-    TransactionRunningHelperService
+    Erc20TokenContract
 } from "@unleashed-business/ts-web3-commons";
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
+import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
 import {Web3BatchRequest} from "web3-core";
 
 export class InflationContract extends BaseTokenAwareContract<InflationAbiFunctional> {
-    constructor(token: Erc20TokenContract, web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
-        super(token, web3Connection, transactionHelper);
+    constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {
+        super(token, toolkit);
     }
 
     protected override getAbi(): typeof InflationAbi {

@@ -11,14 +11,14 @@ import Web3 from "web3";
 import BigNumber from "bignumber.js";
 import {Web3BatchRequest} from "web3-core";
 import { EmptyBytes32 } from "../../utils/utils.const";
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 
 export class TokenAsAServiceDeployerContract extends BaseTokenAwareContract<TokenAsAServiceDeployerAbiFunctional> {
     public static readonly GROUP_TOKEN = Web3.utils.soliditySha3("Token")!;
     public static readonly GROUP_TOKENOMICS = Web3.utils.soliditySha3("Tokenomics")!;
 
-
-    constructor(token: Erc20TokenContract, web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
-        super(token, web3Connection, transactionHelper);
+    constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {
+        super(token, toolkit);
     }
 
     protected getAbi(): any {

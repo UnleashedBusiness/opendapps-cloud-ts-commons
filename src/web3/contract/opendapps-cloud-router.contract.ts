@@ -9,15 +9,13 @@ import {
   OpenDAppsCloudRouterAbi,
   OpenDAppsCloudRouterAbiFunctional
 } from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/opendapps-cloud-router.abi";
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 
 export class OpenDAppsCloudRouterContract extends BaseMultiChainContract<OpenDAppsCloudRouterAbiFunctional> {
   private propertyValueCache: Map<string, any> = new Map<string, any>();
 
-  constructor(
-    web3Connection: ReadOnlyWeb3Connection,
-    transactionHelper: TransactionRunningHelperService,
-  ) {
-    super(web3Connection, transactionHelper);
+  constructor(toolkit: ContractToolkitService) {
+    super(toolkit);
   }
 
   protected getAbi(): typeof OpenDAppsCloudRouterAbi {

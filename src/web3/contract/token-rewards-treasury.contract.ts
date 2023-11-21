@@ -3,20 +3,15 @@ import {
   BaseTokenAwareContract,
   BlockchainDefinition,
   Erc20TokenContract,
-  NumericResult,
-  ReadOnlyWeb3Connection,
-  TransactionRunningHelperService,
 } from '@unleashed-business/ts-web3-commons';
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
+import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
 import BigNumber from 'bignumber.js';
 import { Web3BatchRequest } from 'web3-core';
 
 export class TokenRewardsTreasuryContract extends BaseTokenAwareContract<TokenRewardsTreasuryAbiFunctional> {
-  constructor(
-    token: Erc20TokenContract,
-    web3Connection: ReadOnlyWeb3Connection,
-    transactionHelper: TransactionRunningHelperService,
-  ) {
-    super(token, web3Connection, transactionHelper);
+  constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {
+    super(token, toolkit);
   }
 
   protected getAbi(): any {

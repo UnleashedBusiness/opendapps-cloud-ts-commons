@@ -7,19 +7,15 @@ import {
   BaseMultiChainContract,
   BlockchainDefinition,
   DefaultEVMNativeTokenDecimals,
-  MethodRunnable,
-  NumericResult,
-  ReadOnlyWeb3Connection,
-  TransactionRunningHelperService
+  MethodRunnable
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
+import { NumericResult } from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract.types';
 
 export class GovernorInterfaceContract extends BaseMultiChainContract<ProposalGovernorInterfaceAbiFunctional> {
-  constructor(
-    web3Connection: ReadOnlyWeb3Connection,
-    transactionHelper: TransactionRunningHelperService,
-  ) {
-    super(web3Connection, transactionHelper);
+  constructor(toolkit: ContractToolkitService) {
+    super(toolkit);
   }
 
   protected getAbi(): typeof ProposalGovernorInterfaceAbi {

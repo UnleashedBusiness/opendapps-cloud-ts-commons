@@ -4,16 +4,16 @@ import {
     DecentralizedEntityDeployerAbiFunctional
 } from "@unleashed-business/opendapps-cloud-ts-abi";
 import {
-    BaseMultiChainContract, BlockchainDefinition, MethodRunnable, ReadOnlyWeb3Connection,
-    TransactionRunningHelperService
+    BaseMultiChainContract, BlockchainDefinition, MethodRunnable
 } from "@unleashed-business/ts-web3-commons";
 import {Web3BatchRequest} from "web3-core";
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 
 export class DecentralizedEntityDeployerContract extends BaseMultiChainContract<DecentralizedEntityDeployerAbiFunctional> {
     public static readonly GROUP_DECENTRALIZED_COMPANY = Web3.utils.soliditySha3("DecentralizedCompany")!!;
 
-    constructor(web3Connection: ReadOnlyWeb3Connection, transactionHelper: TransactionRunningHelperService) {
-        super(web3Connection, transactionHelper);
+    constructor(toolkit: ContractToolkitService) {
+        super(toolkit);
     }
 
     protected getAbi(): typeof DecentralizedEntityDeployerAbi {

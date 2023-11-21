@@ -3,19 +3,14 @@ import {
   BaseTokenAwareContract,
   BlockchainDefinition,
   Erc20TokenContract,
-  ReadOnlyWeb3Connection,
-  TransactionRunningHelperService,
 } from '@unleashed-business/ts-web3-commons';
 import { Web3BatchRequest } from 'web3-core';
 import BigNumber from 'bignumber.js';
+import ContractToolkitService from '@unleashed-business/ts-web3-commons/dist/contract/utils/contract-toolkit.service';
 
 export class AssetBackingContract extends BaseTokenAwareContract<AssetBackingAbiFunctional> {
-  constructor(
-    token: Erc20TokenContract,
-    web3Connection: ReadOnlyWeb3Connection,
-    transactionHelper: TransactionRunningHelperService,
-  ) {
-    super(token, web3Connection, transactionHelper);
+  constructor(token: Erc20TokenContract, toolkit: ContractToolkitService) {
+    super(token, toolkit);
   }
 
   protected override getAbi(): any {
