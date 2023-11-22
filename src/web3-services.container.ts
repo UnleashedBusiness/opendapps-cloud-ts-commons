@@ -23,10 +23,14 @@ import {OwnershipSharesNftCollectionContract} from "./web3/contract/ownership-sh
 import {ReferralEngineContract} from "./web3/contract/referral-engine.contract";
 import {ContractDeployerContract} from "./web3/contract/contract-deployer.contract";
 import {OpenDAppsCloudRouterContract} from "./web3/contract/opendapps-cloud-router.contract";
+import { BaselineInsuranceDeployerContract } from "./web3/contract/baseline-insurance-deployer.contract";
+import { AssetBackingContract } from "./web3/contract/asset-backing.contract";
 
 export class Web3ServicesContainer {
   constructor(
     public readonly openDAppsCloudRouter: OpenDAppsCloudRouterContract,
+    public readonly baselineInsuranceDeployerContract: BaselineInsuranceDeployerContract,
+    public readonly assetBackingContract: AssetBackingContract,
     public readonly decentralizedEntityDeployer: DecentralizedEntityDeployerContract,
     public readonly tokenAsAServiceDeployer: TokenAsAServiceDeployerContract,
     public readonly stakingAsAServiceDeployer: StakingAsAServiceDeployerContract,
