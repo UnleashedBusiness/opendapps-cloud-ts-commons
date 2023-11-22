@@ -53,6 +53,10 @@ export class TokenData implements Web3DataInterface {
         return this.deployment.staking;
     }
 
+    public get assetBacking(): string | undefined {
+        return this.deployment.assetBacking;
+    }
+
     public get imageUrl() {
         return this._imageUrl
     };
@@ -132,6 +136,11 @@ export class TokenData implements Web3DataInterface {
     public get hasStaking(): boolean {
         return this.staking !== undefined && this.staking !== EmptyAddress;
     }
+
+    public get hasAssetBacking(): boolean {
+        return this.assetBacking !== undefined && this.assetBacking !== EmptyAddress;
+    }
+
 
     public readonly loadedEvent: EventEmitter<void> = new EventEmitter<void>();
     public readonly imageAvailableEvent: EventEmitter<string> = new EventEmitter<string>();

@@ -9,6 +9,7 @@ export default class TokenDeployment extends DeploymentBase {
     public readonly inflation: string,
     public readonly treasury: string,
     public readonly staking?: string,
+    public readonly assetBacking?: string,
   ) {
     super(address, group);
   }
