@@ -1,23 +1,22 @@
-import BigNumber from "bignumber.js";
-import { Web3DataInterface } from "../../base/web3-data.interface";
-import DecentralizedEntityDeployment from "../../../../web2/data/deployment/decentralized-entity-deployment";
+import BigNumber from 'bignumber.js';
+import { Web3DataInterface } from '../../base/web3-data.interface';
+import DecentralizedEntityDeployment from '../../../../web2/data/deployment/decentralized-entity-deployment';
 import {
   BlockchainDefinition,
   DefaultEVMNativeTokenDecimals,
   ReadOnlyWeb3Connection,
-} from "@unleashed-business/ts-web3-commons";
-import { Web3BatchRequest } from "web3-core";
-import { NftMetadata } from "../../../../web2/data/base/nft/nft-metadata";
-import { Web3ServicesContainer } from "../../../../web3-services.container";
-import { HttpServicesContainer } from "../../../../http-services.container";
-import { EventEmitter } from "@unleashed-business/ts-web3-commons/dist/utils/event-emitter";
+} from '@unleashed-business/ts-web3-commons';
+import { Web3BatchRequest } from 'web3-core';
+import { Web3ServicesContainer } from '../../../../web3-services.container';
+import { HttpServicesContainer } from '../../../../http-services.container';
+import { EventEmitter } from '@unleashed-business/ts-web3-commons/dist/utils/event-emitter';
 
 export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
   protected _initialLoading = false;
   protected _imageLoading = false;
   protected _teamMembers: string[] = [];
 
-  private _name: string = "";
+  private _name: string = '';
   private _funds: BigNumber = new BigNumber(0);
   private _imageUrl?: string;
   private _treasuryUpgradeable: boolean = false;
@@ -64,9 +63,7 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
 
   public abstract walletRoles(wallet: string): string[];
 
-  public readonly loadedEvent: EventEmitter<void> = new EventEmitter();
-  public readonly imageAvailableEvent: EventEmitter<string> =
-    new EventEmitter<string>();
+  public readonly imageAvailableEvent: EventEmitter<string> = new EventEmitter<string>();
 
   protected constructor(
     public readonly deployment: DecentralizedEntityDeployment,
@@ -77,67 +74,52 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
   ) {}
 
   public async refreshFunds(config: BlockchainDefinition): Promise<void> {
-    const fundsNotConverted = await this.connection
-      .getWeb3ReadOnly(config)
-      .eth.getBalance(this.address);
-    this._funds = new BigNumber(fundsNotConverted.toString()).div(
-      DefaultEVMNativeTokenDecimals,
-    );
+    const fundsNotConverted = await this.connection.getWeb3ReadOnly(config).eth.getBalance(this.address);
+    this._funds = new BigNumber(fundsNotConverted.toString()).div(DefaultEVMNativeTokenDecimals);
   }
 
   public async load(
     useCaching: boolean,
     config: BlockchainDefinition,
     web3Batch?: Web3BatchRequest,
+    timeout?: number,
   ): Promise<void> {
     await this.refreshFunds(config);
-    const batch =
-      web3Batch ?? new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+    const batch = web3Batch ?? new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
 
     const loadMetadata = !this._initialLoading || !useCaching;
-    let asyncCounter = 0;
-    const maxCounter = 1;
-    const asyncCallback = () => {
-      asyncCounter++;
-      if (asyncCounter >= maxCounter) {
-        this._initialLoading = true;
-        this.loadedEvent.emit();
-      }
-    };
+
+    const promises: Promise<any>[] = [];
+
+    const [teamMembers, contractDeployer] = await Promise.all([
+      this.web2.decentralizedEntity.members(config.networkId, this.address),
+      this.web3Services.openDAppsCloudRouter.contractDeployer(config, this.routerAddress).then((r) => r as string),
+    ]);
+    this._teamMembers = teamMembers;
 
     if (loadMetadata) {
       this._imageLoading = true;
-      this.web2.nftProxy
-        .getOrganizationMetadata(config.networkId, this.address)
-        .then((metadata: NftMetadata) => {
-          if (metadata.image !== "") {
-            this.web2.nftProxy
-              .getOrganizationImageUrl(config.networkId, this.address)
-              .then((value) => {
+      this.web2.nftProxy.getOrganizationMetadata(config.networkId, this.address).then(metadata => {
+        try {
+          if (metadata.image !== '') {
+            promises.push(
+              this.web2.nftProxy.getOrganizationImageUrl(config.networkId, this.address).then((value) => {
                 this._imageUrl = value;
                 this._imageLoading = false;
                 this.imageAvailableEvent.emit(value);
-              });
+              }),
+            );
           } else {
             this._imageLoading = false;
           }
-        })
-        .catch(() => {
+        } catch (e) {
           this._imageLoading = false;
-        });
+        }
+      })
     }
 
-    this._teamMembers = await this.web2.decentralizedEntity.members(
-      config.networkId,
-      this.address,
-    );
     await this.loadTypeSpecifics(useCaching, config, batch);
 
-    const contractDeployer =
-      (await this.web3Services.openDAppsCloudRouter.contractDeployer(
-        config,
-        this.routerAddress,
-      )) as string;
     await this.web3Services.contractDeployer.isUpgradeable(
       config,
       contractDeployer,
@@ -145,16 +127,15 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
       batch,
       (result) => (this._treasuryUpgradeable = result),
     );
-    await this.web3Services.decentralizedEntityInterface.name(
-      config,
-      this.address,
-      batch,
-      (result) => {
-        this._name = result;
-        asyncCallback();
-      },
-    );
-    if (web3Batch === undefined) await batch.execute();
+    await this.web3Services.decentralizedEntityInterface.name(config, this.address, batch, (result) => {
+      this._name = result;
+    });
+
+    if (web3Batch === undefined) {
+      promises.push(batch.execute({ timeout: timeout }));
+    }
+
+    await Promise.all(promises);
   }
 
   public abstract loadTypeSpecifics(

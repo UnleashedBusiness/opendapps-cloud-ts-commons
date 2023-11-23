@@ -1,9 +1,9 @@
-import {GovernanceProposalData, GovernanceProposalSignatureType} from "./base/governance-proposal.data";
-import {ProposalWithStateData} from "../../../web2/data/multi-sign-proposal/proposal-with-state.data";
-import { BlockchainDefinition, ReadOnlyWeb3Connection } from "@unleashed-business/ts-web3-commons";
-import {Web3ServicesContainer} from "../../../web3-services.container";
-import {HttpServicesContainer} from "../../../http-services.container";
-import {Web3BatchRequest} from "web3-core";
+import { GovernanceProposalData, GovernanceProposalSignatureType } from './base/governance-proposal.data';
+import { ProposalWithStateData } from '../../../web2/data/multi-sign-proposal/proposal-with-state.data';
+import { BlockchainDefinition, ReadOnlyWeb3Connection } from '@unleashed-business/ts-web3-commons';
+import { Web3ServicesContainer } from '../../../web3-services.container';
+import { HttpServicesContainer } from '../../../http-services.container';
+import { Web3BatchRequest } from 'web3-core';
 
 export class MultiSignSharesProposalData extends GovernanceProposalData {
   private static companyOwnershipTokenCache: {
@@ -26,15 +26,9 @@ export class MultiSignSharesProposalData extends GovernanceProposalData {
   public override get voteSignatures(): GovernanceProposalSignatureType[] {
     return [
       {
-        type: "Shares Signed",
-        requiredPercent:
-          this.availableShares > 0
-            ? this.requiredSharesSigned / this.availableShares
-            : 0,
-        currentPercent:
-          this.availableShares > 0
-            ? this.currentSharesSigned / this.availableShares
-            : 0,
+        type: 'Shares Signed',
+        requiredPercent: this.availableShares > 0 ? this.requiredSharesSigned / this.availableShares : 0,
+        currentPercent: this.availableShares > 0 ? this.currentSharesSigned / this.availableShares : 0,
       },
     ];
   }
@@ -48,43 +42,24 @@ export class MultiSignSharesProposalData extends GovernanceProposalData {
     config: BlockchainDefinition,
     web3Batch?: Web3BatchRequest,
   ): Promise<void> {
-
-    if (
-      typeof MultiSignSharesProposalData.companyOwnershipTokenCache[
-        this.proposal.entityAddress
-      ] === "undefined"
-    ) {
-      MultiSignSharesProposalData.companyOwnershipTokenCache[
-        this.proposal.entityAddress
-      ] = {
-        collection: (await this.web3.multiSignSharesEntity.ownershipCollection(
-          config,
-          this.proposal.entityAddress,
-        )) as string,
-        token: (await this.web3.multiSignSharesEntity.ownershipTokenId(
-          config,
-          this.proposal.entityAddress,
-        )) as number,
-      };
+    if (typeof MultiSignSharesProposalData.companyOwnershipTokenCache[this.proposal.entityAddress] === 'undefined') {
+      const cacheData = { collection: '', token: 1 };
+      await Promise.all([
+        this.web3.multiSignSharesEntity
+          .ownershipCollection(config, this.proposal.entityAddress)
+          .then((x) => (cacheData.collection = x as string)),
+        this.web3.multiSignSharesEntity
+          .ownershipTokenId(config, this.proposal.entityAddress)
+          .then((x) => (cacheData.token = x as number)),
+      ]);
+      MultiSignSharesProposalData.companyOwnershipTokenCache[this.proposal.entityAddress] = cacheData;
     }
-    const ownershipAddress =
-      MultiSignSharesProposalData.companyOwnershipTokenCache[
-        this.proposal.entityAddress
-      ].collection;
-    const ownershipTokenId =
-      MultiSignSharesProposalData.companyOwnershipTokenCache[
-        this.proposal.entityAddress
-      ].token;
 
-    await this.web3.ownershipSharesNFTCollection.totalShares(
-      config,
-      ownershipAddress,
-      ownershipTokenId,
-      web3Batch,
-      (result) => {
-        this.availableShares = result;
-      },
-    );
+    const { collection, token } = MultiSignSharesProposalData.companyOwnershipTokenCache[this.proposal.entityAddress];
+
+    await this.web3.ownershipSharesNFTCollection.totalShares(config, collection, token, web3Batch, (result) => {
+      this.availableShares = result;
+    });
     await this.web3.multiSignSharesEntity.requiredSignatures(
       config,
       this.proposal.entityAddress,
