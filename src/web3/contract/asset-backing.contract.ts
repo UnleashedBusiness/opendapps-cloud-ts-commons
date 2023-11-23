@@ -17,13 +17,19 @@ export class AssetBackingContract extends BaseTokenAwareContract<AssetBackingAbi
     return AssetBackingAbi;
   }
 
-  public async isOwnedByNFT(
+  public async lockedUntil(
     config: BlockchainDefinition,
     address: string,
     batch?: Web3BatchRequest,
-    callback?: (result: boolean) => void,
+    callback?: (result: BigNumber) => void,
   ) {
-    return this.getPropertyMulti(config, address, 'isOwnedByNFT', batch, callback);
+    return this.getPropertyMulti(
+      config,
+      address,
+      (contract) => contract.methods.lockedUntil(),
+      batch,
+      callback,
+    );
   }
 
   public async backingAmount(
@@ -164,6 +170,14 @@ export class AssetBackingContract extends BaseTokenAwareContract<AssetBackingAbi
 
   public lock(address: string, durationInBlocks: number) {
     return this.buildMethodRunnableMulti(address, async (contract, _) => contract.methods.lock(durationInBlocks));
+  }
+
+  public withdraw(address: string) {
+    return this.buildMethodRunnableMulti(address, async (contract, _) => contract.methods.withdraw());
+  }
+
+  public withdrawBurn(address: string) {
+    return this.buildMethodRunnableMulti(address, async (contract, _) => contract.methods.withdrawBurn());
   }
 
   public flipBurn(address: string, minAmountOut: number, amountIn: number) {

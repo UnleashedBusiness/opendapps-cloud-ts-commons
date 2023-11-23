@@ -99,23 +99,26 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
 
     if (loadMetadata) {
       this._imageLoading = true;
-      this.web2.nftProxy.getOrganizationMetadata(config.networkId, this.address).then(metadata => {
-        try {
+      this.web2.nftProxy
+        .getOrganizationMetadata(config.networkId, this.address)
+        .then((metadata) => {
           if (metadata.image !== '') {
             promises.push(
               this.web2.nftProxy.getOrganizationImageUrl(config.networkId, this.address).then((value) => {
                 this._imageUrl = value;
                 this._imageLoading = false;
                 this.imageAvailableEvent.emit(value);
+              }).catch(() => {
+                this._imageLoading = false;
               }),
             );
           } else {
             this._imageLoading = false;
           }
-        } catch (e) {
+        })
+        .catch(() => {
           this._imageLoading = false;
-        }
-      })
+        });
     }
 
     await this.loadTypeSpecifics(useCaching, config, batch);

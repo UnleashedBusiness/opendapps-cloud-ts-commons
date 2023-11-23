@@ -141,7 +141,6 @@ export class TokenData implements Web3DataInterface {
     return this.assetBacking !== undefined && this.assetBacking !== EmptyAddress;
   }
 
-  public readonly loadedEvent: EventEmitter<void> = new EventEmitter<void>();
   public readonly imageAvailableEvent: EventEmitter<string> = new EventEmitter<string>();
 
   public constructor(
