@@ -17,6 +17,51 @@ export class AssetBackingContract extends BaseTokenAwareContract<AssetBackingAbi
     return AssetBackingAbi;
   }
 
+  public async backingToken(
+    config: BlockchainDefinition,
+    address: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: BigNumber) => void,
+  ) {
+    return this.getPropertyMulti(
+      config,
+      address,
+      (contract) => contract.methods.backingToken(),
+      batch,
+      callback,
+    );
+  }
+
+  public async backedToken(
+    config: BlockchainDefinition,
+    address: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: BigNumber) => void,
+  ) {
+    return this.getPropertyMulti(
+      config,
+      address,
+      (contract) => contract.methods.backedToken(),
+      batch,
+      callback,
+    );
+  }
+
+  public async scaling(
+    config: BlockchainDefinition,
+    address: string,
+    batch?: Web3BatchRequest,
+    callback?: (result: BigNumber) => void,
+  ) {
+    return this.getPropertyMulti(
+      config,
+      address,
+      (contract) => contract.methods.scaling(),
+      batch,
+      callback,
+    );
+  }
+
   public async lockedUntil(
     config: BlockchainDefinition,
     address: string,
