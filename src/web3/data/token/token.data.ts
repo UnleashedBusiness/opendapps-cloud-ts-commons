@@ -6,6 +6,7 @@ import TokenDeployment from '../../../web2/data/deployment/token-deployment';
 import { Web3ServicesContainer } from '../../../web3-services.container';
 import { HttpServicesContainer } from '../../../http-services.container';
 import { Web3BatchRequest } from 'web3-core';
+import { bigNumberPipe, scaleForTokenPipe } from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils';
 
 export class TokenData implements Web3DataInterface {
   protected _initialLoading = false;
@@ -160,20 +161,19 @@ export class TokenData implements Web3DataInterface {
     const batch = web3Batch ?? new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
 
     let contractDeployer: string;
+    const tokenAsAServiceContract = this.web3.tokenAsAService.readOnlyInstance(config, this.address);
 
     const initialPromises = [
-      this.web3.openDAppsCloudRouter.contractDeployer(config, this.routerAddress).then((x) => x as string),
-      this.web3.tokenAsAService.owner(config, this.address).then((x) => (this._owner = x as string)),
+      this.web3.openDAppsCloudRouter.views.contractDeployer(config, this.routerAddress, {}).then((x) => x as string),
+      tokenAsAServiceContract.owner({}).then((x) => (this._owner = x as string)),
     ];
     if (this._initialLoading || !useCaching) {
       try {
         [, , contractDeployer] = await Promise.all([
-          this.web3.tokenAsAService
-            .ownershipCollection(config, this.address)
+          this.web3.tokenAsAService.views
+            .ownershipCollection(config, this.address, {})
             .then((value) => (this._ownershipCollection = value as string)),
-          this.web3.tokenAsAService
-            .isOwnedByNFT(config, this.address)
-            .then((value) => (this._isOwnedByNFT = value as boolean)),
+          tokenAsAServiceContract.isOwnedByNFT({}).then((value) => (this._isOwnedByNFT = value as boolean)),
           ...initialPromises,
         ]);
       } catch (e) {
@@ -181,9 +181,12 @@ export class TokenData implements Web3DataInterface {
       }
 
       if (this._isOwnedByNFT) {
-        await this.web3.tokenAsAService.ownershipTokenId(config, this.address, batch, (result) => {
-          this._ownershipTokenId = result;
-        });
+        tokenAsAServiceContract
+          .ownershipTokenId({}, batch)
+          .then(bigNumberPipe)
+          .then((result) => {
+            this._ownershipTokenId = result.toNumber();
+          });
 
         this._imageLoading = true;
         this.web2.nftProxy
@@ -206,44 +209,57 @@ export class TokenData implements Web3DataInterface {
     } else {
       [contractDeployer] = await Promise.all(initialPromises);
     }
+    const contractDeployerContract = this.web3.contractDeployer.readOnlyInstance(config, contractDeployer);
 
-    this._hasInflation = EmptyAddress !== this.deployment.inflation;
-    if (this._hasInflation) {
-      await this.web3.contractDeployer.isUpgradeable(config, contractDeployer, this.inflation, batch, (result) => {
-        this._inflationUpgradeable = result;
-      });
-    }
-    await this.web3.contractDeployer.isUpgradeable(config, contractDeployer, this.tokenomics, batch, (result) => {
-      this._tokenomicsUpgradeable = result;
+    contractDeployerContract.isUpgradeable({ _contract: this.tokenomics }, batch).then((result) => {
+      this._tokenomicsUpgradeable = result as boolean;
     });
-    await this.web3.contractDeployer.isUpgradeable(config, contractDeployer, this.treasury, batch, (result) => {
-      this._treasuryUpgradeable = result;
-    });
-
     if (this.hasStaking) {
-      await this.web3.contractDeployer.isUpgradeable(config, contractDeployer, this.staking!, batch, (result) => {
-        this._stakingUpgradeable = result;
+      contractDeployerContract.isUpgradeable({ _contract: this.staking! }, batch).then((result) => {
+        this._stakingUpgradeable = result as boolean;
       });
     }
-    await this.web3.dymanicTokenomics.availableTaxableConfigurations(config, this.tokenomics, batch, (result) => {
-      this._hasComplexType = result > 1;
-    });
+    if (this.hasInflation) {
+      contractDeployerContract.isUpgradeable({ _contract: this.inflation }, batch).then((result) => {
+        this._inflationUpgradeable = result as boolean;
+      });
+    }
+    if (this.hasTreasury) {
+      contractDeployerContract.isUpgradeable({ _contract: this.treasury }, batch).then((result) => {
+        this._treasuryUpgradeable = result as boolean;
+      });
+    }
+
+    this.web3.dymanicTokenomics.views
+      .availableTaxableConfigurations(config, this.tokenomics, {}, batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this._hasComplexType = result.toNumber() > 1;
+      });
 
     if (this._initialLoading || !useCaching) {
-      await this.web3.token.symbol(config, this.address, batch, (result) => (this._symbol = result));
-      await this.web3.token.decimals(config, this.address, batch, (result) => (this._decimals = result));
-      await this.web3.token.name(config, this.address, batch, (result) => (this._name = result));
+      tokenAsAServiceContract.symbol({}, batch).then((result) => (this._symbol = result as string));
+      tokenAsAServiceContract.name({}, batch).then((result) => (this._symbol = result as string));
+      tokenAsAServiceContract
+        .decimals({}, batch)
+        .then(bigNumberPipe)
+        .then((result) => (this._decimals = result.toNumber()));
     }
-    await this.web3.token.totalSupply(config, this.address, batch, (result) => (this._totalSupply = result));
+    tokenAsAServiceContract
+      .totalSupply({}, batch)
+      .then(bigNumberPipe)
+      .then(scaleForTokenPipe(config, this.web3.token, this.address))
+      .then((result) => (this._totalSupply = result));
+
     if (this.hasTreasury) {
-      await this.web3.tokenLiquidityTreasury.getTokenDexListings(config, this.treasury, batch, (result) => {
-        this._dexListings = result;
+      this.web3.tokenLiquidityTreasury.views.getTokenDexListings(config, this.treasury, {}, batch).then((result) => {
+        this._dexListings = result as string[];
       });
     }
 
     const promises: Promise<any>[] = [
-      this.web3.decentralizedEntityInterface
-        .name(config, this._owner)
+      this.web3.decentralizedEntityInterface.views
+        .name(config, this._owner, {})
         .then((x) => {
           this._ownerName = x as string;
           this._ownerIsCompany = true;

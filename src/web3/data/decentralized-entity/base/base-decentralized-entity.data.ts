@@ -69,7 +69,7 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
     public readonly deployment: DecentralizedEntityDeployment,
     protected readonly routerAddress: string,
     protected readonly connection: ReadOnlyWeb3Connection,
-    protected readonly web3Services: Web3ServicesContainer,
+    protected readonly web3: Web3ServicesContainer,
     protected readonly web2: HttpServicesContainer,
   ) {}
 
@@ -93,7 +93,7 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
 
     const [teamMembers, contractDeployer] = await Promise.all([
       this.web2.decentralizedEntity.members(config.networkId, this.address),
-      this.web3Services.openDAppsCloudRouter.contractDeployer(config, this.routerAddress).then((r) => r as string),
+      this.web3.openDAppsCloudRouter.views.contractDeployer(config, this.routerAddress, {}).then((r) => r as string),
     ]);
     this._teamMembers = teamMembers;
 
@@ -104,13 +104,16 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
         .then((metadata) => {
           if (metadata.image !== '') {
             promises.push(
-              this.web2.nftProxy.getOrganizationImageUrl(config.networkId, this.address).then((value) => {
-                this._imageUrl = value;
-                this._imageLoading = false;
-                this.imageAvailableEvent.emit(value);
-              }).catch(() => {
-                this._imageLoading = false;
-              }),
+              this.web2.nftProxy
+                .getOrganizationImageUrl(config.networkId, this.address)
+                .then((value) => {
+                  this._imageUrl = value;
+                  this._imageLoading = false;
+                  this.imageAvailableEvent.emit(value);
+                })
+                .catch(() => {
+                  this._imageLoading = false;
+                }),
             );
           } else {
             this._imageLoading = false;
@@ -123,16 +126,13 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
 
     await this.loadTypeSpecifics(useCaching, config, batch);
 
-    await this.web3Services.contractDeployer.isUpgradeable(
-      config,
-      contractDeployer,
-      this.rewardsTreasury,
-      batch,
-      (result) => (this._treasuryUpgradeable = result),
-    );
-    await this.web3Services.decentralizedEntityInterface.name(config, this.address, batch, (result) => {
-      this._name = result;
-    });
+    this.web3.contractDeployer.views
+      .isUpgradeable(config, contractDeployer, { _contract: this.rewardsTreasury }, batch)
+      .then((result) => (this._treasuryUpgradeable = result as boolean));
+
+    this.web3.decentralizedEntityInterface.views
+      .name(config, this.address, {}, batch)
+      .then((result) => (this._name = result as string));
 
     if (web3Batch === undefined) {
       promises.push(batch.execute({ timeout: timeout }));

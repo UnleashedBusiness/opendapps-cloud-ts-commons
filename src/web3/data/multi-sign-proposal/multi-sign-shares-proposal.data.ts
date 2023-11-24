@@ -4,6 +4,7 @@ import { BlockchainDefinition, ReadOnlyWeb3Connection } from '@unleashed-busines
 import { Web3ServicesContainer } from '../../../web3-services.container';
 import { HttpServicesContainer } from '../../../http-services.container';
 import { Web3BatchRequest } from 'web3-core';
+import { bigNumberPipe } from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils';
 
 export class MultiSignSharesProposalData extends GovernanceProposalData {
   private static companyOwnershipTokenCache: {
@@ -42,50 +43,45 @@ export class MultiSignSharesProposalData extends GovernanceProposalData {
     config: BlockchainDefinition,
     web3Batch?: Web3BatchRequest,
   ): Promise<void> {
+    const entityContract = this.web3.multiSignSharesEntity.readOnlyInstance(config, this.proposal.entityAddress);
+
     if (typeof MultiSignSharesProposalData.companyOwnershipTokenCache[this.proposal.entityAddress] === 'undefined') {
       const cacheData = { collection: '', token: 1 };
       await Promise.all([
-        this.web3.multiSignSharesEntity
-          .ownershipCollection(config, this.proposal.entityAddress)
-          .then((x) => (cacheData.collection = x as string)),
-        this.web3.multiSignSharesEntity
-          .ownershipTokenId(config, this.proposal.entityAddress)
-          .then((x) => (cacheData.token = x as number)),
+        entityContract.ownershipCollection({}).then((x) => (cacheData.collection = x as string)),
+        entityContract
+          .ownershipTokenId({})
+          .then(bigNumberPipe)
+          .then((x) => (cacheData.token = x.toNumber())),
       ]);
       MultiSignSharesProposalData.companyOwnershipTokenCache[this.proposal.entityAddress] = cacheData;
     }
 
     const { collection, token } = MultiSignSharesProposalData.companyOwnershipTokenCache[this.proposal.entityAddress];
 
-    await this.web3.ownershipSharesNFTCollection.totalShares(config, collection, token, web3Batch, (result) => {
-      this.availableShares = result;
-    });
-    await this.web3.multiSignSharesEntity.requiredSignatures(
-      config,
-      this.proposal.entityAddress,
-      this.proposal.proposalId,
-      web3Batch,
-      (result) => {
-        this.requiredSharesSigned = result;
-      },
-    );
-    await this.web3.multiSignSharesEntity.currentSharesSigned(
-      config,
-      this.proposal.entityAddress,
-      this.proposal.proposalId,
-      web3Batch,
-      (result) => {
-        this.currentSharesSigned = result;
-      },
-    );
-    await this.web3.multiSignSharesEntity.currentSharesSigned(
-      config,
-      this.proposal.entityAddress,
-      this.proposal.proposalId,
-      web3Batch,
-      (result) => {
-        this.currentSharesSigned = result;
-      },
-    );
+    this.web3.ownershipSharesNFTCollection.views
+      .totalSupply(config, collection, { id: token }, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.availableShares = result.toNumber();
+      });
+    entityContract
+      .requiredSignatures({ '': this.proposal.proposalId }, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.requiredSharesSigned = result.toNumber();
+      });
+    entityContract
+      .currentSharesSigned({ proposalId: this.proposal.proposalId }, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.currentSharesSigned = result.toNumber();
+      });
+    entityContract
+      .currentSharesSigned({ proposalId: this.proposal.proposalId }, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.currentSharesSigned = result.toNumber();
+      });
   }
 }

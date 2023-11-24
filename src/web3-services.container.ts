@@ -1,58 +1,58 @@
-import {DecentralizedEntityDeployerContract} from "./web3/contract/decentralized-entity-deployer.contract";
-import {TokenAsAServiceDeployerContract} from "./web3/contract/token-as-a-service-deployer.contract";
-import {StakingAsAServiceDeployerContract} from "./web3/contract/staking-as-a-service-deployer.contract";
-import {DecentralizedEntityInterfaceContract} from "./web3/contract/decentralized-entity-interface.contract";
-import {GovernorInterfaceContract} from "./web3/contract/governor-interface.contract";
-import {SingleOwnerEntityContract} from "./web3/contract/single-owner-entity.contract";
-import {MultiSignEntityContract} from "./web3/contract/multi-sign-entity-contract";
-import {MultiSignSharesEntityContract} from "./web3/contract/multi-sign-shares-entity.contract";
+import { OpenDAppsCloudRouterAbiFunctional } from '@unleashed-business/opendapps-cloud-ts-abi/dist/abi/opendapps-cloud-router.abi';
 import {
-  Erc20TokenContract,
-  UniswapFactoryContract,
-  UniswapPairContract,
-  UniswapRouterContract, WethContract
-} from "@unleashed-business/ts-web3-commons";
-import {TokenAsAServiceContract} from "./web3/contract/token-as-a-service.contract";
-import {StakingAsAServiceContract} from "./web3/contract/staking-as-a-service.contract";
-import {DymanicTokenomicsContractService} from "./web3/contract/dynamic-tokenomics.contract";
-import {InflationContract} from "./web3/contract/inflation-contract";
-import {TokenLiquidityTreasuryContract} from "./web3/contract/token-liquidity-treasury.contract";
-import {TokenRewardsTreasuryContract} from "./web3/contract/token-rewards-treasury.contract";
-import {OwnershipNftCollectionContract} from "./web3/contract/ownership-nft-collection.contract";
-import {OwnershipSharesNftCollectionContract} from "./web3/contract/ownership-shares-nft-collection.contract";
-import {ReferralEngineContract} from "./web3/contract/referral-engine.contract";
-import {ContractDeployerContract} from "./web3/contract/contract-deployer.contract";
-import {OpenDAppsCloudRouterContract} from "./web3/contract/opendapps-cloud-router.contract";
-import { BaselineInsuranceDeployerContract } from "./web3/contract/baseline-insurance-deployer.contract";
-import { AssetBackingContract } from "./web3/contract/asset-backing.contract";
+  AssetBackingAbiFunctional,
+  BaselineInsuranceServiceDeployerAbiFunctional,
+  ContractDeployerAbiFunctional,
+  DecentralizedEntityDeployerAbiFunctional,
+  DecentralizedEntityInterfaceAbiFunctional, DynamicTokenomicsAbiFunctional,
+  MultiSignEntityAbiFunctional,
+  MultiSignSharesEntityAbiFunctional,
+  OwnershipNFTCollectionAbiFunctional,
+  OwnershipSharesNFTCollectionAbiFunctional,
+  ProposalGovernorInterfaceAbiFunctional,
+  ReferralsEngineAbiFunctional,
+  SingleOwnerEntityAbiFunctional,
+  StakingAsAServiceAbiFunctional,
+  StakingAsAServiceDeployerAbiFunctional,
+  TokenAsAServiceAbiFunctional,
+  TokenAsAServiceDeployerAbiFunctional,
+  TokenLiquidityTreasuryAbiFunctional,
+  TokenRewardsTreasuryAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi";
+import { Erc20AbiFunctional } from '@unleashed-business/ts-web3-commons/dist/abi/erc20.abi';
+import { UniswapRouterAbiFunctional } from '@unleashed-business/ts-web3-commons/dist/abi/uniswap-router.abi';
+import { UniswapPairAbiFunctional } from '@unleashed-business/ts-web3-commons/dist/abi/uniswap-pair.abi';
+import { UniswapFactoryAbiFunctional } from '@unleashed-business/ts-web3-commons/dist/abi/uniswap-factory.abi';
+import { WETHAbiFunctional } from '@unleashed-business/ts-web3-commons/dist/abi/weth.abi';
+import { Web3Contract } from '@unleashed-business/ts-web3-commons';
 
 export class Web3ServicesContainer {
   constructor(
-    public readonly openDAppsCloudRouter: OpenDAppsCloudRouterContract,
-    public readonly baselineInsuranceDeployerContract: BaselineInsuranceDeployerContract,
-    public readonly assetBackingContract: AssetBackingContract,
-    public readonly decentralizedEntityDeployer: DecentralizedEntityDeployerContract,
-    public readonly tokenAsAServiceDeployer: TokenAsAServiceDeployerContract,
-    public readonly stakingAsAServiceDeployer: StakingAsAServiceDeployerContract,
-    public readonly decentralizedEntityInterface: DecentralizedEntityInterfaceContract,
-    public readonly governorInterface: GovernorInterfaceContract,
-    public readonly singleOwnerEntity: SingleOwnerEntityContract,
-    public readonly multiSignEntity: MultiSignEntityContract,
-    public readonly multiSignSharesEntity: MultiSignSharesEntityContract,
-    public readonly token: Erc20TokenContract,
-    public readonly tokenAsAService: TokenAsAServiceContract,
-    public readonly stakingAsAService: StakingAsAServiceContract,
-    public readonly dymanicTokenomics: DymanicTokenomicsContractService,
-    public readonly inflation: InflationContract,
-    public readonly tokenLiquidityTreasury: TokenLiquidityTreasuryContract,
-    public readonly tokenRewardsTreasury: TokenRewardsTreasuryContract,
-    public readonly uniswapRouter: UniswapRouterContract,
-    public readonly uniswapPair: UniswapPairContract,
-    public readonly uniswapFactory: UniswapFactoryContract,
-    public readonly ownershipNFTCollection: OwnershipNftCollectionContract,
-    public readonly ownershipSharesNFTCollection: OwnershipSharesNftCollectionContract,
-    public readonly referralEngine: ReferralEngineContract,
-    public readonly contractDeployer: ContractDeployerContract,
-    public readonly weth: WethContract,
+    public readonly openDAppsCloudRouter: Web3Contract<OpenDAppsCloudRouterAbiFunctional>,
+    public readonly baselineInsuranceDeployerContract: Web3Contract<BaselineInsuranceServiceDeployerAbiFunctional>,
+    public readonly assetBackingContract: Web3Contract<AssetBackingAbiFunctional>,
+    public readonly decentralizedEntityDeployer: Web3Contract<DecentralizedEntityDeployerAbiFunctional>,
+    public readonly tokenAsAServiceDeployer: Web3Contract<TokenAsAServiceDeployerAbiFunctional>,
+    public readonly stakingAsAServiceDeployer: Web3Contract<StakingAsAServiceDeployerAbiFunctional>,
+    public readonly decentralizedEntityInterface: Web3Contract<DecentralizedEntityInterfaceAbiFunctional>,
+    public readonly governorInterface: Web3Contract<ProposalGovernorInterfaceAbiFunctional>,
+    public readonly singleOwnerEntity: Web3Contract<SingleOwnerEntityAbiFunctional>,
+    public readonly multiSignEntity: Web3Contract<MultiSignEntityAbiFunctional>,
+    public readonly multiSignSharesEntity: Web3Contract<MultiSignSharesEntityAbiFunctional>,
+    public readonly token: Web3Contract<Erc20AbiFunctional>,
+    public readonly tokenAsAService: Web3Contract<TokenAsAServiceAbiFunctional>,
+    public readonly stakingAsAService: Web3Contract<StakingAsAServiceAbiFunctional>,
+    public readonly dymanicTokenomics: Web3Contract<DynamicTokenomicsAbiFunctional>,
+    public readonly inflation: Web3Contract<StakingAsAServiceAbiFunctional>,
+    public readonly tokenLiquidityTreasury: Web3Contract<TokenLiquidityTreasuryAbiFunctional>,
+    public readonly tokenRewardsTreasury: Web3Contract<TokenRewardsTreasuryAbiFunctional>,
+    public readonly uniswapRouter: Web3Contract<UniswapRouterAbiFunctional>,
+    public readonly uniswapPair: Web3Contract<UniswapPairAbiFunctional>,
+    public readonly uniswapFactory: Web3Contract<UniswapFactoryAbiFunctional>,
+    public readonly ownershipNFTCollection: Web3Contract<OwnershipNFTCollectionAbiFunctional>,
+    public readonly ownershipSharesNFTCollection: Web3Contract<OwnershipSharesNFTCollectionAbiFunctional>,
+    public readonly referralEngine: Web3Contract<ReferralsEngineAbiFunctional>,
+    public readonly contractDeployer: Web3Contract<ContractDeployerAbiFunctional>,
+    public readonly weth: Web3Contract<WETHAbiFunctional>,
   ) {}
 }

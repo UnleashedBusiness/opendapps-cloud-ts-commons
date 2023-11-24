@@ -13,28 +13,6 @@ export * from './web3/data/multi-sign-proposal/multi-sign-proposal.data';
 export * from './web3/data/multi-sign-proposal/governance-proposal.factory';
 export * from './web3/data/multi-sign-proposal/multi-sign-shares-proposal.data';
 
-export * from './web3/contract/asset-backing.contract';
-export * from './web3/contract/baseline-insurance-deployer.contract';
-export * from './web3/contract/contract-deployer.contract';
-export * from './web3/contract/decentralized-entity-deployer.contract';
-export * from './web3/contract/decentralized-entity-interface.contract';
-export * from './web3/contract/dynamic-tokenomics.contract';
-export * from './web3/contract/governor-interface.contract';
-export * from './web3/contract/inflation-contract';
-export * from './web3/contract/multi-sign-entity-contract';
-export * from './web3/contract/multi-sign-shares-entity.contract';
-export * from './web3/contract/opendapps-cloud-router.contract';
-export * from './web3/contract/ownership-nft-collection.contract';
-export * from './web3/contract/ownership-shares-nft-collection.contract';
-export * from './web3/contract/referral-engine.contract';
-export * from './web3/contract/single-owner-entity.contract';
-export * from './web3/contract/staking-as-a-service.contract';
-export * from './web3/contract/staking-as-a-service-deployer.contract';
-export * from './web3/contract/token-as-a-service.contract';
-export * from './web3/contract/token-as-a-service-deployer.contract';
-export * from './web3/contract/token-liquidity-treasury.contract';
-export * from './web3/contract/token-rewards-treasury.contract';
-
 export * from './web2/decentralized-entity-http.service'
 export * from './web2/indexing-http.service'
 export * from './web2/deployment.http.service'

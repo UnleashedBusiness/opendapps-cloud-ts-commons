@@ -6,6 +6,8 @@ export default class DecentralizedEntityDeployment extends DeploymentBase {
     group: string,
     public readonly treasury: string,
     public readonly type: string,
+    public readonly ownershipCollection?: string,
+    public readonly tokenId?: number,
   ) {
     super(address, group);
   }

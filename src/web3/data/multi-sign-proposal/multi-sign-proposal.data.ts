@@ -1,9 +1,10 @@
-import {GovernanceProposalData, GovernanceProposalSignatureType} from "./base/governance-proposal.data";
-import {ProposalWithStateData} from "../../../web2/data/multi-sign-proposal/proposal-with-state.data";
-import {Web3ServicesContainer} from "../../../web3-services.container";
-import {HttpServicesContainer} from "../../../http-services.container";
-import {Web3BatchRequest} from "web3-core";
-import { BlockchainDefinition, ReadOnlyWeb3Connection } from "@unleashed-business/ts-web3-commons";
+import { GovernanceProposalData, GovernanceProposalSignatureType } from './base/governance-proposal.data';
+import { ProposalWithStateData } from '../../../web2/data/multi-sign-proposal/proposal-with-state.data';
+import { Web3ServicesContainer } from '../../../web3-services.container';
+import { HttpServicesContainer } from '../../../http-services.container';
+import { Web3BatchRequest } from 'web3-core';
+import { BlockchainDefinition, ReadOnlyWeb3Connection } from '@unleashed-business/ts-web3-commons';
+import { bigNumberPipe } from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils';
 
 export class MultiSignProposalData extends GovernanceProposalData {
   private availableRootSignaturesCount = 0;
@@ -25,29 +26,25 @@ export class MultiSignProposalData extends GovernanceProposalData {
   public override get voteSignatures(): GovernanceProposalSignatureType[] {
     return [
       {
-        type: "Root Signatures",
+        type: 'Root Signatures',
         requiredPercent:
           this.availableRootSignaturesCount > 0
-            ? this.requiredRootSignaturesCount /
-              this.availableRootSignaturesCount
+            ? this.requiredRootSignaturesCount / this.availableRootSignaturesCount
             : 0,
         currentPercent:
           this.availableRootSignaturesCount > 0
-            ? this.currentRootSignaturesCount /
-              this.availableRootSignaturesCount
+            ? this.currentRootSignaturesCount / this.availableRootSignaturesCount
             : 0,
       },
       {
-        type: "Total Signatures (Root + Leaf)",
+        type: 'Total Signatures (Root + Leaf)',
         requiredPercent:
           this.availableTotalSignaturesCount > 0
-            ? this.requiredTotalSignaturesCount /
-              this.availableTotalSignaturesCount
+            ? this.requiredTotalSignaturesCount / this.availableTotalSignaturesCount
             : 0,
         currentPercent:
           this.availableTotalSignaturesCount > 0
-            ? this.currentTotalSignaturesCount /
-              this.availableTotalSignaturesCount
+            ? this.currentTotalSignaturesCount / this.availableTotalSignaturesCount
             : 0,
       },
     ];
@@ -57,18 +54,11 @@ export class MultiSignProposalData extends GovernanceProposalData {
     return this.proposal.methodCallList
       .map((x) => {
         return {
-          method: x.methodCallAbi.substring(0, x.methodCallAbi.indexOf("(")),
-          args: x.methodCallAbi.substring(
-            x.methodCallAbi.indexOf("(") + 1,
-            x.methodCallAbi.indexOf(")"),
-          ),
+          method: x.methodCallAbi.substring(0, x.methodCallAbi.indexOf('(')),
+          args: x.methodCallAbi.substring(x.methodCallAbi.indexOf('(') + 1, x.methodCallAbi.indexOf(')')),
         };
       })
-      .filter(
-        (x) =>
-          ["promoteRoot", "promoteLeaf"].filter((y) => y == x.method).length >
-          0,
-      )
+      .filter((x) => ['promoteRoot', 'promoteLeaf'].filter((y) => y == x.method).length > 0)
       .map((x) => x.args);
   }
 
@@ -77,55 +67,43 @@ export class MultiSignProposalData extends GovernanceProposalData {
     config: BlockchainDefinition,
     web3Batch?: Web3BatchRequest,
   ): Promise<void> {
-    await this.web3.multiSignEntity.requiredRootSignatures(
-      config,
-      this.proposal.entityAddress,
-      web3Batch,
-      (result) => {
-        this.requiredRootSignaturesCount = result;
-      },
-    );
-    await this.web3.multiSignEntity.requiredTotalSignatures(
-      config,
-      this.proposal.entityAddress,
-      web3Batch,
-      (result) => {
-        this.requiredTotalSignaturesCount = result;
-      },
-    );
-    await this.web3.multiSignEntity.availableRootSignatures(
-      config,
-      this.proposal.entityAddress,
-      web3Batch,
-      (result) => {
-        this.availableRootSignaturesCount = result;
-      },
-    );
-    await this.web3.multiSignEntity.availableTotalSignatures(
-      config,
-      this.proposal.entityAddress,
-      web3Batch,
-      (result) => {
-        this.availableTotalSignaturesCount = result;
-      },
-    );
-    await this.web3.multiSignEntity.currentRootSignatures(
-      config,
-      this.proposal.entityAddress,
-      this.proposal.proposalId,
-      web3Batch,
-      (result) => {
-        this.currentRootSignaturesCount = result;
-      },
-    );
-    await this.web3.multiSignEntity.currentTotalSignatures(
-      config,
-      this.proposal.entityAddress,
-      this.proposal.proposalId,
-      web3Batch,
-      (result) => {
-        this.currentTotalSignaturesCount = result;
-      },
-    );
+    const entityContract = this.web3.multiSignEntity.readOnlyInstance(config, this.proposal.entityAddress);
+
+    entityContract
+      .requiredRootSignatures({}, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.requiredRootSignaturesCount = result.toNumber();
+      });
+    entityContract
+      .requiredTotalSignatures({}, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.requiredTotalSignaturesCount = result.toNumber();
+      });
+    entityContract
+      .availableRootSignatures({}, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.availableRootSignaturesCount = result.toNumber();
+      });
+    entityContract
+      .availableTotalSignatures({}, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.availableTotalSignaturesCount = result.toNumber();
+      });
+    entityContract
+      .currentRootSignatures({ proposalId: this.proposal.proposalId }, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.currentRootSignaturesCount = result.toNumber();
+      });
+    entityContract
+      .currentTotalSignatures({ proposalId: this.proposal.proposalId }, web3Batch)
+      .then(bigNumberPipe)
+      .then((result) => {
+        this.currentTotalSignaturesCount = result.toNumber();
+      });
   }
 }
