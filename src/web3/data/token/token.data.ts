@@ -239,7 +239,7 @@ export class TokenData implements Web3DataInterface {
 
     if (this._initialLoading || !useCaching) {
       tokenAsAServiceContract.symbol({}, batch).then((result) => (this._symbol = result as string));
-      tokenAsAServiceContract.name({}, batch).then((result) => (this._symbol = result as string));
+      tokenAsAServiceContract.name({}, batch).then((result) => (this._name = result as string));
       tokenAsAServiceContract
         .decimals({}, batch)
         .then(bigNumberPipe)
