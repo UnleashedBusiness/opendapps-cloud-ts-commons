@@ -25,6 +25,10 @@ import { UniswapPairAbiFunctional } from '@unleashed-business/ts-web3-commons/di
 import { UniswapFactoryAbiFunctional } from '@unleashed-business/ts-web3-commons/dist/abi/uniswap-factory.abi';
 import { WETHAbiFunctional } from '@unleashed-business/ts-web3-commons/dist/abi/weth.abi';
 import { Web3Contract } from '@unleashed-business/ts-web3-commons';
+import { PresaleServiceAbiFunctional } from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/presale-service.abi";
+import {
+  PresaleServiceDeployerAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/presale-service-deployer.abi";
 
 export class Web3ServicesContainer {
   constructor(
@@ -54,5 +58,7 @@ export class Web3ServicesContainer {
     public readonly referralEngine: Web3Contract<ReferralsEngineAbiFunctional>,
     public readonly contractDeployer: Web3Contract<ContractDeployerAbiFunctional>,
     public readonly weth: Web3Contract<WETHAbiFunctional>,
+    public readonly presaleService: Web3Contract<PresaleServiceAbiFunctional>,
+    public readonly presaleServiceDeployer: Web3Contract<PresaleServiceDeployerAbiFunctional>,
   ) {}
 }
