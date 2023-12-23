@@ -19,7 +19,7 @@ import { PresaleDeployment } from '../../../web2/data/deployment/presale-deploym
 import { bn_wrap } from '@unleashed-business/ts-web3-commons/dist/utils/big-number.utils';
 import { PresaleServiceAbiFunctional } from '@unleashed-business/opendapps-cloud-ts-abi/dist/abi/presale-service.abi';
 
-export class TokenData implements Web3DataInterface {
+export class PresaleData implements Web3DataInterface {
   protected _initialLoading = false;
   private _imageLoading = false;
 

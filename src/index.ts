@@ -12,6 +12,7 @@ export * from './web3/data/decentralized-entity/decentralized-entity.factory';
 export * from './web3/data/multi-sign-proposal/multi-sign-proposal.data';
 export * from './web3/data/multi-sign-proposal/governance-proposal.factory';
 export * from './web3/data/multi-sign-proposal/multi-sign-shares-proposal.data';
+export * from './web3/data/presale/presale.data';
 
 export * from './web2/decentralized-entity-http.service'
 export * from './web2/indexing-http.service'
