@@ -272,6 +272,10 @@ export class PresaleData implements Web3DataInterface {
 
       this.loadPurchaseTokenStuff(presaleContract, batch);
     }
+
+    if (web3Batch === undefined) {
+      await batch.execute({ timeout: timeout });
+    }
   }
 
   private loadPurchaseTokenStuff(
