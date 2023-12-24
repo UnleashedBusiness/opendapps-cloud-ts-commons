@@ -11,10 +11,7 @@ import { EventEmitter } from '@unleashed-business/ts-web3-commons/dist/utils/eve
 import { Web3ServicesContainer } from '../../../web3-services.container';
 import { HttpServicesContainer } from '../../../http-services.container';
 import { Web3BatchRequest } from 'web3-core';
-import {
-  bigNumberPipe,
-  scalePipe,
-} from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils';
+import { bigNumberPipe, scalePipe } from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils';
 import { PresaleDeployment } from '../../../web2/data/deployment/presale-deployment';
 import { bn_wrap } from '@unleashed-business/ts-web3-commons/dist/utils/big-number.utils';
 import { PresaleServiceAbiFunctional } from '@unleashed-business/opendapps-cloud-ts-abi/dist/abi/presale-service.abi';
@@ -227,7 +224,7 @@ export class PresaleData implements Web3DataInterface {
     this.web3.token.views
       .decimals<NumericResult>(config, this._forToken.address, {}, batch)
       .then(bigNumberPipe)
-      .then((x) => {
+      .then(async (x) => {
         this._forToken.decimals = x.toNumber();
 
         const forTokenDecimalsBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
@@ -241,7 +238,7 @@ export class PresaleData implements Web3DataInterface {
           .then(bigNumberPipe)
           .then(scalePipe(bn_wrap(10 ** this._forToken.decimals)))
           .then((x) => (this._forToken.totalSupply = x));
-        return forTokenDecimalsBatch.execute({ timeout: timeout });
+        await forTokenDecimalsBatch.execute({ timeout: timeout });
       });
 
     if (!this._isExternalToken) {
@@ -260,12 +257,12 @@ export class PresaleData implements Web3DataInterface {
       this.web3.token.views
         .decimals<NumericResult>(config, this._purchaseToken.address, {}, batch)
         .then(bigNumberPipe)
-        .then((x) => {
+        .then(async (x) => {
           this._purchaseToken.decimals = x.toNumber();
 
           const purchaseTokenDecimalsBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
           this.loadPurchaseTokenStuff(presaleContract, purchaseTokenDecimalsBatch);
-          return purchaseTokenDecimalsBatch.execute({timeout: timeout});
+          await purchaseTokenDecimalsBatch.execute({ timeout: timeout });
         });
     } else {
       this._purchaseToken.symbol = config.networkSymbol;
