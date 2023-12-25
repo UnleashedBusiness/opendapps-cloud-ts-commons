@@ -156,13 +156,16 @@ export class PresaleData implements Web3DataInterface {
     const presaleContract = this.web3.presaleService.readOnlyInstance(config, this.address);
     const initialBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
 
-    this.forToken.address = this.deployment.token;
-    presaleContract.isExternalToken({}, initialBatch).then((x) => (this._isExternalToken = x as boolean));
-    presaleContract
-      .EXCHANGE_RATE_SCALING<NumericResult>({}, initialBatch)
-      .then(bigNumberPipe)
-      .then((x) => (this._exchangeScaling = x.toNumber()));
-    presaleContract.purchaseToken({}, initialBatch).then((x) => (this._purchaseToken.address = x as string));
+    if (this._initialLoading || !useCaching) {
+      this.forToken.address = this.deployment.token;
+      presaleContract.isExternalToken({}, initialBatch).then((x) => (this._isExternalToken = x as boolean));
+      presaleContract
+        .EXCHANGE_RATE_SCALING<NumericResult>({}, initialBatch)
+        .then(bigNumberPipe)
+        .then((x) => (this._exchangeScaling = x.toNumber()));
+      presaleContract.purchaseToken({}, initialBatch).then((x) => (this._purchaseToken.address = x as string));
+    }
+
     presaleContract
       .startBlock<NumericResult>({}, initialBatch)
       .then(bigNumberPipe)
@@ -199,14 +202,17 @@ export class PresaleData implements Web3DataInterface {
         });
     }
     const presaleDeployerContract = this.web3.presaleServiceDeployer.readOnlyInstance(config, presaleDeployer);
-    presaleDeployerContract
-      .minBlocksForStart<NumericResult>({}, batch)
-      .then(bigNumberPipe)
-      .then((x) => (this._minBlockStartDistance = x));
-    presaleDeployerContract
-      .minBlocksDuration<NumericResult>({}, batch)
-      .then(bigNumberPipe)
-      .then((x) => (this._minBlockDuration = x));
+    if (this._initialLoading || !useCaching) {
+      presaleDeployerContract
+        .minBlocksForStart<NumericResult>({}, batch)
+        .then(bigNumberPipe)
+        .then((x) => (this._minBlockStartDistance = x));
+      presaleDeployerContract
+        .minBlocksDuration<NumericResult>({}, batch)
+        .then(bigNumberPipe)
+        .then((x) => (this._minBlockDuration = x));
+    }
+
     presaleContract
       .endBlock<NumericResult>({}, batch)
       .then(bigNumberPipe)
@@ -215,12 +221,15 @@ export class PresaleData implements Web3DataInterface {
       });
     presaleContract.isRunning({}, batch).then((x) => (this._isRunning = x as boolean));
 
-    this.web3.token.views
-      .name(config, this._forToken.address, {}, batch)
-      .then((x) => (this._forToken.name = x as string));
-    this.web3.token.views
-      .symbol(config, this._forToken.address, {}, batch)
-      .then((x) => (this._forToken.symbol = x as string));
+    if (this._initialLoading || !useCaching) {
+      this.web3.token.views
+        .name(config, this._forToken.address, {}, batch)
+        .then((x) => (this._forToken.name = x as string));
+      this.web3.token.views
+        .symbol(config, this._forToken.address, {}, batch)
+        .then((x) => (this._forToken.symbol = x as string));
+    }
+
     this.web3.token.views
       .decimals<NumericResult>(config, this._forToken.address, {}, batch)
       .then(bigNumberPipe)
@@ -241,19 +250,22 @@ export class PresaleData implements Web3DataInterface {
         await forTokenDecimalsBatch.execute({ timeout: timeout });
       });
 
-    if (!this._isExternalToken) {
+    if (!this._isExternalToken && (this._initialLoading || !useCaching)) {
       this.web3.tokenAsAService.views
         .owner(config, this._forToken.address, {}, batch)
         .then((x) => (this._owner = x as string));
     }
 
     if (this._purchaseToken.address !== EmptyAddress) {
-      this.web3.token.views
-        .name(config, this._purchaseToken.address, {}, batch)
-        .then((x) => (this._purchaseToken.name = x as string));
-      this.web3.token.views
-        .symbol(config, this._purchaseToken.address, {}, batch)
-        .then((x) => (this._purchaseToken.symbol = x as string));
+      if (this._initialLoading || !useCaching) {
+        this.web3.token.views
+          .name(config, this._purchaseToken.address, {}, batch)
+          .then((x) => (this._purchaseToken.name = x as string));
+        this.web3.token.views
+          .symbol(config, this._purchaseToken.address, {}, batch)
+          .then((x) => (this._purchaseToken.symbol = x as string));
+      }
+
       this.web3.token.views
         .decimals<NumericResult>(config, this._purchaseToken.address, {}, batch)
         .then(bigNumberPipe)
@@ -299,6 +311,11 @@ export class PresaleData implements Web3DataInterface {
         .then(bigNumberPipe)
         .then(scalePipe(bn_wrap(10 ** this._purchaseToken.decimals)))
         .then((x) => (this._hardCap = x));
+      presaleContract
+        .currentCap<NumericResult>({}, purchaseTokenDecimalsBatch)
+        .then(bigNumberPipe)
+        .then(scalePipe(bn_wrap(10 ** this._purchaseToken.decimals)))
+        .then((x) => (this._currentCap = x));
       presaleContract
         .minPerWallet<NumericResult>({}, purchaseTokenDecimalsBatch)
         .then(bigNumberPipe)
