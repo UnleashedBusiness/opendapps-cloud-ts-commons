@@ -326,7 +326,9 @@ export class PresaleData implements Web3DataInterface {
 
   private async getTokenDecimals(config: BlockchainDefinition, token: string): Promise<number> {
     if (typeof PresaleData._decimalCache[token] === "undefined") {
-      PresaleData._decimalCache[token] = await this.web3.token.views.decimals(config, token, {});
+      PresaleData._decimalCache[token] = await this.web3.token.views.decimals<NumericResult>(config, token, {})
+        .then(bigNumberPipe)
+        .then(value => value.toNumber());
     }
     return PresaleData._decimalCache[token];
   }
