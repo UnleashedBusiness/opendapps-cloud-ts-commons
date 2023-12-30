@@ -240,19 +240,34 @@ export class PresaleData implements Web3DataInterface {
     this.web3.token.views
       .balanceOf<NumericResult>(config, this._forToken.address, { account: this.address }, batch)
       .then(bigNumberPipe)
-      .then((x) => (this._availableTokens = x));
+      .then((x) => {
+        this._availableTokens = x;
+        if (this._forToken.decimals !== undefined) {
+          this._availableTokens = this._availableTokens.dividedBy(10 ** this._forToken.decimals);
+        }
+      });
     this.web3.token.views
       .totalSupply<NumericResult>(config, this._forToken.address, {}, batch)
       .then(bigNumberPipe)
-      .then((x) => (this._forToken.totalSupply = x));
+      .then((x) => {
+        this._forToken.totalSupply = x;
+        if (this._forToken.decimals !== undefined) {
+          this._forToken.totalSupply = this._forToken.totalSupply.dividedBy(10 ** this._forToken.decimals);
+        }
+      });
 
     this.web3.token.views
       .decimals<NumericResult>(config, this._forToken.address, {}, batch)
       .then(bigNumberPipe)
       .then(async (x) => {
         this._forToken.decimals = x.toNumber();
-        this._availableTokens = this._availableTokens.dividedBy(10 ** this._forToken.decimals);
-        this._forToken.totalSupply = this._forToken.totalSupply.dividedBy(10 ** this._forToken.decimals);
+
+        if (this._availableTokens !== undefined) {
+          this._availableTokens = this._availableTokens.dividedBy(10 ** this._forToken.decimals);
+        }
+        if (this._forToken.totalSupply !== undefined) {
+          this._forToken.totalSupply = this._forToken.totalSupply.dividedBy(10 ** this._forToken.decimals);
+        }
       });
 
     if (loadAll && (this._initialLoading || !useCaching)) {
