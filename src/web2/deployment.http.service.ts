@@ -14,7 +14,7 @@ export class DeploymentHttpService extends BaseHttpService {
     return this.GET(relativePath);
   }
 
-  public async fetchMulti<T extends DeploymentBase>(chainId: number, targetAddresses: string[]): Promise<T> {
+  public async fetchMulti<T extends DeploymentBase>(chainId: number, targetAddresses: string[]): Promise<Record<string, T>> {
     let relativePath = DeploymentHttpService.FETCH_MULTI
       .replace("{chainId}", chainId.toString());
     if (targetAddresses.length > 0) {
