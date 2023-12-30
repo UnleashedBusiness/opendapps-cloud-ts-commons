@@ -17,6 +17,8 @@ import { bn_wrap } from '@unleashed-business/ts-web3-commons/dist/utils/big-numb
 import { PresaleServiceAbiFunctional } from '@unleashed-business/opendapps-cloud-ts-abi/dist/abi/presale-service.abi';
 
 export class PresaleData implements Web3DataInterface {
+  private static _decimalCache: Record<string, number> = {};
+
   protected _initialLoading = false;
   private _imageLoading = false;
 
@@ -160,6 +162,9 @@ export class PresaleData implements Web3DataInterface {
 
     if (this._initialLoading || !useCaching) {
       this.forToken.address = this.deployment.token;
+      this.forToken.decimals = await this.getTokenDecimals(config, this.forToken.address);
+      this.purchaseToken.decimals = await this.getTokenDecimals(config, this.purchaseToken.address);
+
       presaleContract.isExternalToken({}, batch).then((x) => {
         this._isExternalToken = x as boolean;
         this._imageLoading = true;
@@ -240,35 +245,13 @@ export class PresaleData implements Web3DataInterface {
     this.web3.token.views
       .balanceOf<NumericResult>(config, this._forToken.address, { account: this.address }, batch)
       .then(bigNumberPipe)
-      .then((x) => {
-        this._availableTokens = x;
-        if (this._forToken.decimals !== undefined) {
-          this._availableTokens = this._availableTokens.dividedBy(10 ** this._forToken.decimals);
-        }
-      });
+      .then(scalePipe(bn_wrap(10 ** this._forToken.decimals)))
+      .then((x) => this._availableTokens = x);
     this.web3.token.views
       .totalSupply<NumericResult>(config, this._forToken.address, {}, batch)
       .then(bigNumberPipe)
-      .then((x) => {
-        this._forToken.totalSupply = x;
-        if (this._forToken.decimals !== undefined) {
-          this._forToken.totalSupply = this._forToken.totalSupply.dividedBy(10 ** this._forToken.decimals);
-        }
-      });
-
-    this.web3.token.views
-      .decimals<NumericResult>(config, this._forToken.address, {}, batch)
-      .then(bigNumberPipe)
-      .then(async (x) => {
-        this._forToken.decimals = x.toNumber();
-
-        if (this._availableTokens !== undefined) {
-          this._availableTokens = this._availableTokens.dividedBy(10 ** this._forToken.decimals);
-        }
-        if (this._forToken.totalSupply !== undefined) {
-          this._forToken.totalSupply = this._forToken.totalSupply.dividedBy(10 ** this._forToken.decimals);
-        }
-      });
+      .then(scalePipe(bn_wrap(10 ** this._forToken.decimals)))
+      .then((x) => this._forToken.totalSupply = x);
 
     if (loadAll && (this._initialLoading || !useCaching)) {
       this.web3.tokenAsAService.views
@@ -286,18 +269,9 @@ export class PresaleData implements Web3DataInterface {
           .then((x) => (this._purchaseToken.symbol = x as string));
       }
 
-      this.web3.token.views
-        .decimals<NumericResult>(config, this._purchaseToken.address, {}, batch)
-        .then(bigNumberPipe)
-        .then(async (x) => {
-          this._purchaseToken.decimals = x.toNumber();
-
-          if (loadAll) {
-            const purchaseTokenDecimalsBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
-            this.loadPurchaseTokenStuff(presaleContract, purchaseTokenDecimalsBatch);
-            await purchaseTokenDecimalsBatch.execute({ timeout: timeout });
-          }
-        });
+      if (loadAll) {
+        this.loadPurchaseTokenStuff(presaleContract, batch);
+      }
     } else {
       this._purchaseToken.symbol = config.networkSymbol;
       this._purchaseToken.name = 'Native Token';
@@ -351,6 +325,13 @@ export class PresaleData implements Web3DataInterface {
         .then(scalePipe(bn_wrap(10 ** this._purchaseToken.decimals)))
         .then((x) => (this._maxPerWallet = x));
     }
+  }
+
+  private async getTokenDecimals(config: BlockchainDefinition, token: string): Promise<number> {
+    if (typeof PresaleData._decimalCache[token] === "undefined") {
+      PresaleData._decimalCache[token] = await this.web3.token.views.decimals(config, token, {});
+    }
+    return PresaleData._decimalCache[token];
   }
 }
 
