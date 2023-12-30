@@ -149,8 +149,10 @@ export class PresaleData implements Web3DataInterface {
     config: BlockchainDefinition,
     web3Batch?: Web3BatchRequest,
     timeout?: number,
+    extended?: boolean,
   ): Promise<void> {
     const batch = web3Batch ?? new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+    const loadAll = extended ?? false;
 
     let presaleDeployer: string;
     const presaleContract = this.web3.presaleService.readOnlyInstance(config, this.address);
@@ -158,51 +160,56 @@ export class PresaleData implements Web3DataInterface {
 
     if (this._initialLoading || !useCaching) {
       this.forToken.address = this.deployment.token;
-      presaleContract.isExternalToken({}, initialBatch).then((x) => (this._isExternalToken = x as boolean));
-      presaleContract
-        .EXCHANGE_RATE_SCALING<NumericResult>({}, initialBatch)
-        .then(bigNumberPipe)
-        .then((x) => (this._exchangeScaling = x.toNumber()));
-      presaleContract.purchaseToken({}, initialBatch).then((x) => (this._purchaseToken.address = x as string));
-    }
+      presaleContract.isExternalToken({}, batch).then((x) => {
+        this._isExternalToken = x as boolean;
+        this._imageLoading = true;
 
-    presaleContract
-      .startBlock<NumericResult>({}, initialBatch)
-      .then(bigNumberPipe)
-      .then((x) => {
-        this._isScheduled = x.gt(0);
-        if (this._isScheduled) {
-          this._startBlock = x;
-        }
-      });
-    this.web3.openDAppsCloudRouter.views
-      .presaleServiceDeployer(config, this.routerAddress, {}, initialBatch)
-      .then((x) => (presaleDeployer = x as string));
-
-    await Promise.all([initialBatch.execute({ timeout: timeout })]);
-
-    if (!this._isExternalToken && (this._initialLoading || !useCaching)) {
-      this._imageLoading = true;
-
-      this.web2.nftProxy
-        .getTokenMetadata(config.networkId, this._forToken.address)
-        .then((metadata) => {
-          if (metadata.image !== '') {
-            this.web2.nftProxy.getTokenImageUrl(config.networkId, this._forToken.address).then((value) => {
-              this._imageUrl = value;
+        this.web2.nftProxy
+          .getTokenMetadata(config.networkId, this._forToken.address)
+          .then((metadata) => {
+            if (metadata.image !== '') {
+              this.web2.nftProxy.getTokenImageUrl(config.networkId, this._forToken.address).then((value) => {
+                this._imageUrl = value;
+                this._imageLoading = false;
+                this.imageAvailableEvent.emit(value);
+              });
+            } else {
               this._imageLoading = false;
-              this.imageAvailableEvent.emit(value);
-            });
-          } else {
+            }
+          })
+          .catch(() => {
             this._imageLoading = false;
-          }
-        })
-        .catch(() => {
-          this._imageLoading = false;
-        });
+          });
+      });
+
+      if (loadAll) {
+        presaleContract
+          .EXCHANGE_RATE_SCALING<NumericResult>({}, initialBatch)
+          .then(bigNumberPipe)
+          .then((x) => (this._exchangeScaling = x.toNumber()));
+        presaleContract.purchaseToken({}, initialBatch).then((x) => (this._purchaseToken.address = x as string));
+      }
     }
-    const presaleDeployerContract = this.web3.presaleServiceDeployer.readOnlyInstance(config, presaleDeployer);
-    if (this._initialLoading || !useCaching) {
+    if (loadAll) {
+      presaleContract
+        .startBlock<NumericResult>({}, initialBatch)
+        .then(bigNumberPipe)
+        .then((x) => {
+          this._isScheduled = x.gt(0);
+          if (this._isScheduled) {
+            this._startBlock = x;
+          }
+        });
+      this.web3.openDAppsCloudRouter.views
+        .presaleServiceDeployer(config, this.routerAddress, {}, initialBatch)
+        .then((x) => (presaleDeployer = x as string));
+
+      await Promise.all([initialBatch.execute({ timeout: timeout })]);
+    }
+
+    if (loadAll && (this._initialLoading || !useCaching)) {
+      const presaleDeployerContract = this.web3.presaleServiceDeployer.readOnlyInstance(config, presaleDeployer);
+
       presaleDeployerContract
         .minBlocksForStart<NumericResult>({}, batch)
         .then(bigNumberPipe)
@@ -231,26 +238,24 @@ export class PresaleData implements Web3DataInterface {
     }
 
     this.web3.token.views
+      .balanceOf<NumericResult>(config, this._forToken.address, { account: this.address }, batch)
+      .then(bigNumberPipe)
+      .then((x) => (this._availableTokens = x));
+    this.web3.token.views
+      .totalSupply<NumericResult>(config, this._forToken.address, {}, batch)
+      .then(bigNumberPipe)
+      .then((x) => (this._forToken.totalSupply = x));
+
+    this.web3.token.views
       .decimals<NumericResult>(config, this._forToken.address, {}, batch)
       .then(bigNumberPipe)
       .then(async (x) => {
         this._forToken.decimals = x.toNumber();
-
-        const forTokenDecimalsBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
-        this.web3.token.views
-          .balanceOf<NumericResult>(config, this._forToken.address, { account: this.address }, forTokenDecimalsBatch)
-          .then(bigNumberPipe)
-          .then(scalePipe(bn_wrap(10 ** this._forToken.decimals)))
-          .then((x) => (this._availableTokens = x));
-        this.web3.token.views
-          .totalSupply<NumericResult>(config, this._forToken.address, {}, forTokenDecimalsBatch)
-          .then(bigNumberPipe)
-          .then(scalePipe(bn_wrap(10 ** this._forToken.decimals)))
-          .then((x) => (this._forToken.totalSupply = x));
-        await forTokenDecimalsBatch.execute({ timeout: timeout });
+        this._availableTokens = this._availableTokens.dividedBy(10 ** this._forToken.decimals);
+        this._forToken.totalSupply = this._forToken.totalSupply.dividedBy(10 ** this._forToken.decimals);
       });
 
-    if (!this._isExternalToken && (this._initialLoading || !useCaching)) {
+    if (loadAll && (this._initialLoading || !useCaching)) {
       this.web3.tokenAsAService.views
         .owner(config, this._forToken.address, {}, batch)
         .then((x) => (this._owner = x as string));
@@ -272,9 +277,11 @@ export class PresaleData implements Web3DataInterface {
         .then(async (x) => {
           this._purchaseToken.decimals = x.toNumber();
 
-          const purchaseTokenDecimalsBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
-          this.loadPurchaseTokenStuff(presaleContract, purchaseTokenDecimalsBatch);
-          await purchaseTokenDecimalsBatch.execute({ timeout: timeout });
+          if (loadAll) {
+            const purchaseTokenDecimalsBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+            this.loadPurchaseTokenStuff(presaleContract, purchaseTokenDecimalsBatch);
+            await purchaseTokenDecimalsBatch.execute({ timeout: timeout });
+          }
         });
     } else {
       this._purchaseToken.symbol = config.networkSymbol;
@@ -282,7 +289,9 @@ export class PresaleData implements Web3DataInterface {
       this._purchaseToken.totalSupply = new BigNumber('100000000');
       this._purchaseToken.decimals = 18;
 
-      this.loadPurchaseTokenStuff(presaleContract, batch);
+      if (loadAll) {
+        this.loadPurchaseTokenStuff(presaleContract, batch);
+      }
     }
 
     if (web3Batch === undefined) {
