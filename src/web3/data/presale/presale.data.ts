@@ -161,9 +161,8 @@ export class PresaleData implements Web3DataInterface {
     const initialBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
 
     if (this._initialLoading || !useCaching) {
-      this.forToken.address = this.deployment.token;
-      this.forToken.decimals = await this.getTokenDecimals(config, this.forToken.address);
-      this.purchaseToken.decimals = await this.getTokenDecimals(config, this.purchaseToken.address);
+      this._forToken.address = this.deployment.token;
+      this._forToken.decimals = await this.getTokenDecimals(config, this._forToken.address);
 
       presaleContract.isExternalToken({}, batch).then((x) => {
         this._isExternalToken = x as boolean;
@@ -259,28 +258,26 @@ export class PresaleData implements Web3DataInterface {
         .then((x) => (this._owner = x as string));
     }
 
-    if (this._purchaseToken.address !== EmptyAddress) {
-      if (this._initialLoading || !useCaching) {
-        this.web3.token.views
-          .name(config, this._purchaseToken.address, {}, batch)
-          .then((x) => (this._purchaseToken.name = x as string));
-        this.web3.token.views
-          .symbol(config, this._purchaseToken.address, {}, batch)
-          .then((x) => (this._purchaseToken.symbol = x as string));
+    if (loadAll) {
+      if (this._purchaseToken.address !== EmptyAddress) {
+        if (this._initialLoading || !useCaching) {
+          this.web3.token.views
+            .name(config, this._purchaseToken.address, {}, batch)
+            .then((x) => (this._purchaseToken.name = x as string));
+          this.web3.token.views
+            .symbol(config, this._purchaseToken.address, {}, batch)
+            .then((x) => (this._purchaseToken.symbol = x as string));
+
+          this._purchaseToken.decimals = await this.getTokenDecimals(config, this._purchaseToken.address);
+        }
+      } else {
+        this._purchaseToken.symbol = config.networkSymbol;
+        this._purchaseToken.name = 'Native Token';
+        this._purchaseToken.totalSupply = new BigNumber('100000000');
+        this._purchaseToken.decimals = 18;
       }
 
-      if (loadAll) {
-        this.loadPurchaseTokenStuff(presaleContract, batch);
-      }
-    } else {
-      this._purchaseToken.symbol = config.networkSymbol;
-      this._purchaseToken.name = 'Native Token';
-      this._purchaseToken.totalSupply = new BigNumber('100000000');
-      this._purchaseToken.decimals = 18;
-
-      if (loadAll) {
-        this.loadPurchaseTokenStuff(presaleContract, batch);
-      }
+      this.loadPurchaseTokenStuff(presaleContract, batch);
     }
 
     if (web3Batch === undefined) {
