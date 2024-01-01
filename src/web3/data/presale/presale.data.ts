@@ -157,7 +157,7 @@ export class PresaleData implements Web3DataInterface {
     const loadAll = extended ?? false;
 
     let presaleDeployer: string;
-    const presaleContract = this.web3.presaleService.readOnlyInstance(config, this.address);
+    const presaleContract = this.web3.presaleService.readOnlyInstance(config, this.deployment.address);
     const initialBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
 
     if (this._initialLoading || !useCaching) {
@@ -283,6 +283,7 @@ export class PresaleData implements Web3DataInterface {
     if (web3Batch === undefined) {
       await batch.execute({ timeout: timeout });
     }
+    this._initialLoading = false;
   }
 
   private loadPurchaseTokenStuff(
