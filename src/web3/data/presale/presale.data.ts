@@ -27,6 +27,7 @@ export class PresaleData implements Web3DataInterface {
   private _isRunning = false;
   private _isFinished = false;
   private _isScheduled = false;
+  private _isSuccessful = false;
   private _isExternalToken = false;
 
   private _forToken: TokenShortInfo = new TokenShortInfo();
@@ -231,6 +232,8 @@ export class PresaleData implements Web3DataInterface {
         this._endBlock = x;
       });
     presaleContract.isRunning({}, batch).then((x) => (this._isRunning = x as boolean));
+    presaleContract.ended({}, batch).then((x) => (this._isFinished = x as boolean));
+    presaleContract.reachedSoftCap({}, batch).then((x) => (this._isSuccessful = x as boolean));
 
     if (this._initialLoading || !useCaching) {
       this.web3.token.views
