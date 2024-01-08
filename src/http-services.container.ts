@@ -5,6 +5,7 @@ import { MultiSignProposalHttpService } from './web2/multi-sign-proposal-http.se
 import { IndexingHttpService } from './web2/indexing-http.service';
 import { DeploymentHttpService } from './web2/deployment.http.service';
 import { PresaleServiceDeployerHttpService } from './web2/presale-service-deployer-http.service';
+import { BlocktimeHttpService } from "./web2/blocktime-http.service";
 
 export class HttpServicesContainer {
   constructor(
@@ -15,5 +16,6 @@ export class HttpServicesContainer {
     public readonly indexing: IndexingHttpService,
     public readonly deployment: DeploymentHttpService,
     public readonly presale: PresaleServiceDeployerHttpService,
+    public readonly blocktime: BlocktimeHttpService,
   ) {}
 }
