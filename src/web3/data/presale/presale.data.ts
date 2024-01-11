@@ -195,16 +195,17 @@ export class PresaleData implements Web3DataInterface {
         presaleContract.purchaseToken({}, initialBatch).then((x) => (this._purchaseToken.address = x as string));
       }
     }
+    presaleContract
+      .startBlock<NumericResult>({}, initialBatch)
+      .then(bigNumberPipe)
+      .then((x) => {
+        this._isScheduled = x.gt(0);
+        if (this._isScheduled) {
+          this._startBlock = x;
+        }
+      });
+
     if (loadAll) {
-      presaleContract
-        .startBlock<NumericResult>({}, initialBatch)
-        .then(bigNumberPipe)
-        .then((x) => {
-          this._isScheduled = x.gt(0);
-          if (this._isScheduled) {
-            this._startBlock = x;
-          }
-        });
       this.web3.openDAppsCloudRouter.views
         .presaleServiceDeployer(config, this.routerAddress, {}, initialBatch)
         .then((x) => (presaleDeployer = x as string));
