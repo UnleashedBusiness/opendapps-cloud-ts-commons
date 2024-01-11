@@ -196,7 +196,7 @@ export class PresaleData implements Web3DataInterface {
       }
     }
     presaleContract
-      .startBlock<NumericResult>({}, initialBatch)
+      .startBlock<NumericResult>({}, loadAll ? initialBatch : batch)
       .then(bigNumberPipe)
       .then((x) => {
         this._isScheduled = x.gt(0);
