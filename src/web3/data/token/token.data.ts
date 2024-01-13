@@ -188,15 +188,6 @@ export class TokenData implements Web3DataInterface {
       .then((result) => (this._decimals = result.toNumber()));
     tokenAsAServiceContract.owner({}, initialsBatch).then((x) => (this._owner = x as string));
 
-    for (const routerAddress of TokenData.availableRouterCache) {
-      this.web3.uniswapRouter.views
-        .factory<string>(config, routerAddress, {}, initialsBatch)
-        .then((x) => (TokenData.availableRouterCacheFactories[routerAddress] = x));
-      this.web3.uniswapRouter.views
-        .WETH<string>(config, routerAddress, {}, initialsBatch)
-        .then((x) => (TokenData.availableRouterCacheWETH[routerAddress] = x));
-    }
-
     if (this._initialLoading || !useCaching) {
       try {
         this.web3.tokenAsAService.views
@@ -241,12 +232,27 @@ export class TokenData implements Web3DataInterface {
       await initialsBatch.execute();
     }
 
-    if (TokenData.availableRouterCache === undefined) {
-      TokenData.availableRouterCache = await this.web3.tokenAsAServiceDeployer.views.availableDexRouters(
-        config,
-        tokenDeployer,
-        {},
-      );
+    if (!this.hasTreasury) {
+      if (TokenData.availableRouterCache === undefined) {
+        TokenData.availableRouterCache = await this.web3.tokenAsAServiceDeployer.views.availableDexRouters(
+          config,
+          tokenDeployer,
+          {},
+        );
+      }
+
+      const factoryBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+
+      for (const routerAddress of TokenData.availableRouterCache) {
+        this.web3.uniswapRouter.views
+          .factory<string>(config, routerAddress, {}, factoryBatch)
+          .then((x) => (TokenData.availableRouterCacheFactories[routerAddress] = x));
+        this.web3.uniswapRouter.views
+          .WETH<string>(config, routerAddress, {}, factoryBatch)
+          .then((x) => (TokenData.availableRouterCacheWETH[routerAddress] = x));
+      }
+
+      await factoryBatch.execute();
     }
 
     const contractDeployerContract = this.web3.contractDeployer.readOnlyInstance(config, contractDeployer);
