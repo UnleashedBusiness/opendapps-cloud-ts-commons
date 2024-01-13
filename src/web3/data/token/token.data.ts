@@ -173,21 +173,15 @@ export class TokenData implements Web3DataInterface {
     let tokenDeployer: string;
     const tokenAsAServiceContract = this.web3.tokenAsAService.readOnlyInstance(config, this.address);
 
-    if (TokenData.availableRouterCache === undefined) {
-      TokenData.availableRouterCache = await this.web3.tokenAsAServiceDeployer.views.availableDexRouters(
-        config,
-        tokenDeployer,
-        {},
-      );
-    }
-
     const initialsBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
     this.web3.openDAppsCloudRouter.views
       .contractDeployer<string>(config, this.routerAddress, {}, initialsBatch)
       .then((x) => (contractDeployer = x));
     this.web3.openDAppsCloudRouter.views
       .tokenAsAServiceDeployer<string>(config, this.routerAddress, {}, initialsBatch)
-      .then((x) => (tokenDeployer = x));
+      .then(async (x) => {
+        (tokenDeployer = x);
+      });
     tokenAsAServiceContract
       .decimals<NumericResult>({}, initialsBatch)
       .then(bigNumberPipe)
@@ -245,6 +239,14 @@ export class TokenData implements Web3DataInterface {
       }
     } else {
       await initialsBatch.execute();
+    }
+
+    if (TokenData.availableRouterCache === undefined) {
+      TokenData.availableRouterCache = await this.web3.tokenAsAServiceDeployer.views.availableDexRouters(
+        config,
+        tokenDeployer,
+        {},
+      );
     }
 
     const contractDeployerContract = this.web3.contractDeployer.readOnlyInstance(config, contractDeployer);
