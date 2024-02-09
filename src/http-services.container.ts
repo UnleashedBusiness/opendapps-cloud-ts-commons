@@ -6,6 +6,7 @@ import { IndexingHttpService } from './web2/indexing-http.service';
 import { DeploymentHttpService } from './web2/deployment.http.service';
 import { PresaleServiceDeployerHttpService } from './web2/presale-service-deployer-http.service';
 import { BlocktimeHttpService } from "./web2/blocktime-http.service";
+import {StakingAsAServiceDeployerHttpService} from "./web2/staking-as-a-service-deployer-http.service";
 
 export class HttpServicesContainer {
   constructor(
@@ -17,5 +18,6 @@ export class HttpServicesContainer {
     public readonly deployment: DeploymentHttpService,
     public readonly presale: PresaleServiceDeployerHttpService,
     public readonly blocktime: BlocktimeHttpService,
+    public readonly stakingAsAService: StakingAsAServiceDeployerHttpService,
   ) {}
 }
