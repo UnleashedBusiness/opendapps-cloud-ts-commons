@@ -1,12 +1,12 @@
-import { OrganizationTypeEnum } from '../../enum/organization-type.enum';
-import { MultiSignEntityData } from './multi-sign-entity.data';
-import { MultiSignSharesEntityData } from './multi-sign-shares-entity.data';
-import { SingleOwnerEntityData } from './single-owner-entity.data';
-import { BaseDecentralizedEntityData } from './base/base-decentralized-entity.data';
-import DecentralizedEntityDeployment from '../../../web2/data/deployment/decentralized-entity-deployment';
-import { Web3ServicesContainer } from '../../../web3-services.container';
-import { HttpServicesContainer } from '../../../http-services.container';
-import { BlockchainDefinition, ReadOnlyWeb3Connection } from '@unleashed-business/ts-web3-commons';
+import { OrganizationTypeEnum } from '../../enum/organization-type.enum.js';
+import { MultiSignEntityData } from './multi-sign-entity.data.js';
+import { MultiSignSharesEntityData } from './multi-sign-shares-entity.data.js';
+import { SingleOwnerEntityData } from './single-owner-entity.data.js';
+import { BaseDecentralizedEntityData } from './base/base-decentralized-entity.data.js';
+import DecentralizedEntityDeployment from '../../../web2/data/deployment/decentralized-entity-deployment.js';
+import { Web3ServicesContainer } from '../../../web3-services.container.js';
+import { HttpServicesContainer } from '../../../http-services.container.js';
+import { BlockchainDefinition, type ReadOnlyWeb3Connection } from '@unleashed-business/ts-web3-commons';
 
 export class DecentralizedEntityFactory {
   static async buildIt(

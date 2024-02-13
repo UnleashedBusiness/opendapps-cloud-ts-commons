@@ -1,12 +1,12 @@
-import { DecentralizedEntityHttpService } from './web2/decentralized-entity-http.service';
-import { TokenAsAServiceDeployerHttpService } from './web2/token-as-a-service-deployer-http.service';
-import { NftProxyHttpService } from './web2/nft-proxy-http.service';
-import { MultiSignProposalHttpService } from './web2/multi-sign-proposal-http.service';
-import { IndexingHttpService } from './web2/indexing-http.service';
-import { DeploymentHttpService } from './web2/deployment.http.service';
-import { PresaleServiceDeployerHttpService } from './web2/presale-service-deployer-http.service';
-import { BlocktimeHttpService } from "./web2/blocktime-http.service";
-import {StakingAsAServiceDeployerHttpService} from "./web2/staking-as-a-service-deployer-http.service";
+import { DecentralizedEntityHttpService } from './web2/decentralized-entity-http.service.js';
+import { TokenAsAServiceDeployerHttpService } from './web2/token-as-a-service-deployer-http.service.js';
+import { NftProxyHttpService } from './web2/nft-proxy-http.service.js';
+import { MultiSignProposalHttpService } from './web2/multi-sign-proposal-http.service.js';
+import { IndexingHttpService } from './web2/indexing-http.service.js';
+import { DeploymentHttpService } from './web2/deployment.http.service.js';
+import { PresaleServiceDeployerHttpService } from './web2/presale-service-deployer-http.service.js';
+import { BlocktimeHttpService } from "./web2/blocktime-http.service.js";
+import {StakingAsAServiceDeployerHttpService} from "./web2/staking-as-a-service-deployer-http.service.js";
 
 export class HttpServicesContainer {
   constructor(

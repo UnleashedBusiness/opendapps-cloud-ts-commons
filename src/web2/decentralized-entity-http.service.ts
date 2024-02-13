@@ -1,5 +1,5 @@
-import {BaseHttpService} from "./base/base-http.service";
-import {OwnershipNftMetadataDeployData} from "./data/decentralized-entity/ownership-nft-metadata-deploy.data";
+import {BaseHttpService} from "./base/base-http.service.js";
+import {OwnershipNftMetadataDeployData} from "./data/decentralized-entity/ownership-nft-metadata-deploy.data.js";
 
 export class DecentralizedEntityHttpService extends BaseHttpService {
   private static readonly ADDR_PREFIX = '/backend/entity';

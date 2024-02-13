@@ -1,6 +1,6 @@
-import {ProposalWithStateData} from "./data/multi-sign-proposal/proposal-with-state.data";
-import {ProposalStateData} from "./data/multi-sign-proposal/proposal-state.data";
-import {BaseHttpService} from "./base/base-http.service";
+import {ProposalWithStateData} from "./data/multi-sign-proposal/proposal-with-state.data.js";
+import {ProposalStateData} from "./data/multi-sign-proposal/proposal-state.data.js";
+import {BaseHttpService} from "./base/base-http.service.js";
 
 export class MultiSignProposalHttpService extends BaseHttpService {
   public static readonly ADDR_PREFIX = '/backend/multiSignProposal';

@@ -1,5 +1,5 @@
-import {BaseHttpService} from "./base/base-http.service";
-import {NftMetadata} from "./data/base/nft/nft-metadata";
+import {BaseHttpService} from "./base/base-http.service.js";
+import {NftMetadata} from "./data/base/nft/nft-metadata.js";
 
 export class NftProxyHttpService extends BaseHttpService {
   public static readonly ORGANIZATION_METADATA_URL = '/nft-proxy/{targetChain}/entity/metadata/{address}';

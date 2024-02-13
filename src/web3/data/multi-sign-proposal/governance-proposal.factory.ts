@@ -1,12 +1,12 @@
-import {OrganizationTypeEnum} from "../../enum/organization-type.enum";
-import {GovernanceProposalData} from "./base/governance-proposal.data";
-import {ProposalWithStateData} from "../../../web2/data/multi-sign-proposal/proposal-with-state.data";
-import {MultiSignProposalData} from "./multi-sign-proposal.data";
-import {MultiSignSharesProposalData} from "./multi-sign-shares-proposal.data";
-import {Web3ServicesContainer} from "../../../web3-services.container";
-import {HttpServicesContainer} from "../../../http-services.container";
-import DecentralizedEntityDeployment from "../../../web2/data/deployment/decentralized-entity-deployment";
-import { BlockchainDefinition, ReadOnlyWeb3Connection } from "@unleashed-business/ts-web3-commons";
+import {OrganizationTypeEnum} from "../../enum/organization-type.enum.js";
+import {GovernanceProposalData} from "./base/governance-proposal.data.js";
+import {ProposalWithStateData} from "../../../web2/data/multi-sign-proposal/proposal-with-state.data.js";
+import {MultiSignProposalData} from "./multi-sign-proposal.data.js";
+import {MultiSignSharesProposalData} from "./multi-sign-shares-proposal.data.js";
+import {Web3ServicesContainer} from "../../../web3-services.container.js";
+import {HttpServicesContainer} from "../../../http-services.container.js";
+import DecentralizedEntityDeployment from "../../../web2/data/deployment/decentralized-entity-deployment.js";
+import {BlockchainDefinition, type ReadOnlyWeb3Connection} from "@unleashed-business/ts-web3-commons";
 
 export class GovernanceProposalFactory {
     private static decentralizedEntityTypeCache: { [index: string]: number } = {}

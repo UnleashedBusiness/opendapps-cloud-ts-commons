@@ -1,4 +1,4 @@
-import { BaseSignedBlockchainData } from "./base-signed-blockchain.data";
+import { BaseSignedBlockchainData } from "./base-signed-blockchain.data.js";
 
 export class BaseDecentralizedEntitySignedData extends BaseSignedBlockchainData {
 

@@ -1,6 +1,5 @@
-import { BaseHttpService } from './base/base-http.service';
-import { NftMetadata } from './data/base/nft/nft-metadata';
-import { BlocktimeForChain } from "./data/blocktime/blocktime-for-chain";
+import { BaseHttpService } from './base/base-http.service.js';
+import { BlocktimeForChain } from "./data/blocktime/blocktime-for-chain.js";
 
 export class BlocktimeHttpService extends BaseHttpService {
   public static readonly BLOCKTIME_FOR_CHAIN = '/blocktime/indexing/{targetChain}';

@@ -1,4 +1,4 @@
-import {BaseHttpService} from "./base/base-http.service";
+import {BaseHttpService} from "./base/base-http.service.js";
 
 export class IndexingHttpService extends BaseHttpService {
   private static readonly ADDR_PREFIX = '/backend/indexing';

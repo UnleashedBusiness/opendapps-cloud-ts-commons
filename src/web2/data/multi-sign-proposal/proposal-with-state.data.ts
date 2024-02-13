@@ -1,4 +1,4 @@
-import { MethodClass, ProposalData } from "./proposal.data";
+import { MethodClass, ProposalData } from "./proposal.data.js";
 
 export class ProposalWithStateData extends ProposalData {
   constructor(

@@ -1,5 +1,5 @@
-import DeploymentBase from "./data/deployment/base/deployment.base";
-import {BaseHttpService} from "./base/base-http.service";
+import DeploymentBase from "./data/deployment/base/deployment.base.js";
+import {BaseHttpService} from "./base/base-http.service.js";
 
 export class DeploymentHttpService extends BaseHttpService {
   private static readonly ADDR_PREFIX = '/backend/deployment';

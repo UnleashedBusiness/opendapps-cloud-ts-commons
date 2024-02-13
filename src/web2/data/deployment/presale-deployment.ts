@@ -1,4 +1,4 @@
-import DeploymentBase from "./base/deployment.base";
+import DeploymentBase from "./base/deployment.base.js";
 
 export class PresaleDeployment extends DeploymentBase{
   constructor(

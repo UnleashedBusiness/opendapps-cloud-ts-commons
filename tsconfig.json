@@ -1,17 +1,10 @@
 {
+  "extends": "./tsconfig.base.json",
+  "include": ["src"],
+  "exclude": [],
   "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
-    "experimentalDecorators": true,
-    "declaration": true,
+    "baseUrl": "./",
     "outDir": "./dist",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "removeComments": false,
-    "esModuleInterop": true
   },
-  "include": [
-    "./src/**/*"
-  ]
 }
 

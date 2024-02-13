@@ -1,12 +1,17 @@
-import { BaseDecentralizedEntityData } from './base/base-decentralized-entity.data';
+import { BaseDecentralizedEntityData } from './base/base-decentralized-entity.data.js';
 import Web3 from 'web3';
-import { ProposalStateEnum } from '../../enum/proposal-state.enum';
-import DecentralizedEntityDeployment from '../../../web2/data/deployment/decentralized-entity-deployment';
-import { Web3ServicesContainer } from '../../../web3-services.container';
-import { HttpServicesContainer } from '../../../http-services.container';
+import { ProposalStateEnum } from '../../enum/proposal-state.enum.js';
+import DecentralizedEntityDeployment from '../../../web2/data/deployment/decentralized-entity-deployment.js';
+import { Web3ServicesContainer } from '../../../web3-services.container.js';
+import { HttpServicesContainer } from '../../../http-services.container.js';
 import { Web3BatchRequest } from 'web3-core';
-import { BlockchainDefinition, ReadOnlyWeb3Connection } from '@unleashed-business/ts-web3-commons';
-import { bigNumberPipe } from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils';
+import {
+  BlockchainDefinition,
+  type NumericResult,
+  type ReadOnlyWeb3Connection
+} from '@unleashed-business/ts-web3-commons';
+import { bigNumberPipe } from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils.js';
+import type {ProposalWithStateData} from "../../../web2/data/multi-sign-proposal/proposal-with-state.data.js";
 
 export class MultiSignSharesEntityData extends BaseDecentralizedEntityData {
   private _holderShares: number[] = [];
@@ -58,7 +63,7 @@ export class MultiSignSharesEntityData extends BaseDecentralizedEntityData {
   }
 
   async loadTypeSpecifics(
-    useCaching: boolean,
+    _: boolean,
     config: BlockchainDefinition,
     web3Batch?: Web3BatchRequest,
   ): Promise<void> {
@@ -67,7 +72,7 @@ export class MultiSignSharesEntityData extends BaseDecentralizedEntityData {
       this.deployment.ownershipCollection!,
     );
     ownershipCollectionContract
-      .totalSupply({ id: this.deployment.tokenId! }, web3Batch)
+      .totalSupply<NumericResult>({ id: this.deployment.tokenId! }, web3Batch)
       .then(bigNumberPipe)
       .then((result) => {
         this._totalShares = result.toNumber();
@@ -75,7 +80,7 @@ export class MultiSignSharesEntityData extends BaseDecentralizedEntityData {
 
     for (let i = 0; i < this._teamMembers.length; i++) {
       ownershipCollectionContract
-        .balanceOf({ id: this.deployment.tokenId!, account: this._teamMembers[i] }, web3Batch)
+        .balanceOf<NumericResult>({ id: this.deployment.tokenId!, account: this._teamMembers[i] }, web3Batch)
         .then(bigNumberPipe)
         .then((result) => {
           this._holderShares.push(result.toNumber());
@@ -85,7 +90,7 @@ export class MultiSignSharesEntityData extends BaseDecentralizedEntityData {
 
     this.web2.multiSignProposal
       .listForCompanyByState(config.networkId, this.address, ProposalStateEnum.Active.valueOf())
-      .then((proposalsToVote) => {
+      .then((proposalsToVote: ProposalWithStateData[]) => {
         this._votingProposals = proposalsToVote.map((x) => x.proposalId);
       });
   }

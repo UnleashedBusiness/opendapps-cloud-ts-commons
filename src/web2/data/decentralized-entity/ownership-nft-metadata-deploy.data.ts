@@ -1,5 +1,5 @@
-import { BaseSignedApiData } from "../base/base-signed-api.data";
-import { NftMetadata } from "../base/nft/nft-metadata";
+import { BaseSignedApiData } from "../base/base-signed-api.data.js";
+import { NftMetadata } from "../base/nft/nft-metadata.js";
 import Web3 from "web3";
 
 export class OwnershipNftMetadataDeployData extends BaseSignedApiData {

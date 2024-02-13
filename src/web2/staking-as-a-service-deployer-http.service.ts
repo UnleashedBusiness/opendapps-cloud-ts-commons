@@ -1,5 +1,4 @@
-import {BaseHttpService} from "./base/base-http.service";
-import {OwnershipNftMetadataDeployData} from "./data/decentralized-entity/ownership-nft-metadata-deploy.data";
+import {BaseHttpService} from "./base/base-http.service.js";
 
 export class StakingAsAServiceDeployerHttpService extends BaseHttpService {
   private static readonly ADDR_PREFIX = '/backend/saas-deployer';
