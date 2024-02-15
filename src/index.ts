@@ -14,6 +14,9 @@ export * from './web3/data/multi-sign-proposal/governance-proposal.factory.js';
 export * from './web3/data/multi-sign-proposal/multi-sign-shares-proposal.data.js';
 export * from './web3/data/presale/presale.data.js';
 
+export * from './web3/loader/staking/staking-list.loader.js';
+export * from './web3/loader/staking/staking-list.data.js';
+
 export * from './web2/decentralized-entity-http.service.js'
 export * from './web2/indexing-http.service.js'
 export * from './web2/deployment.http.service.js'
