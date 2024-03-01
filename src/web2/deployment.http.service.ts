@@ -28,7 +28,7 @@ export class DeploymentHttpService extends BaseHttpService {
         return this.GET(relativePath);
     }
 
-    public async list<T extends DeploymentBase>(chainId: number, type: string, take?: number, skip?: number): Promise<T> {
+    public async list<T extends DeploymentBase>(chainId: number, type: string, take?: number, skip?: number): Promise<T[]> {
         let relativePath = DeploymentHttpService.LIST
             .replace("{chainId}", chainId.toString());
 
