@@ -1,6 +1,6 @@
 {
   "name": "@unleashed-business/opendapps-cloud-ts-commons",
-  "version": "6.0.1",
+  "version": "6.1.0-beta.6",
   "description": "",
   "private": false,
   "author": "ShadowsCrypto",
@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "@unleashed-business/ts-web3-commons": "^6.0.1",
-    "@unleashed-business/opendapps-cloud-ts-abi": "^2.6.0"
+    "@unleashed-business/opendapps-cloud-ts-abi": "^2.7.0"
   },
   "peerDependencies": {
     "web3-core": ">=4.2.0",

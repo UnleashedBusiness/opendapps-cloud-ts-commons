@@ -1,5 +1,5 @@
 import {BaseHttpService} from "./base/base-http.service.js";
-import {OwnershipNftMetadataDeployData} from "./data/decentralized-entity/ownership-nft-metadata-deploy.data.js";
+import type {NftMetadata} from "./data/base/nft/nft-metadata.js";
 
 export class TokenAsAServiceDeployerHttpService extends BaseHttpService {
   private static readonly ADDR_PREFIX = '/backend/taas-deployer';
@@ -26,7 +26,7 @@ export class TokenAsAServiceDeployerHttpService extends BaseHttpService {
     return this.GET(relativePath)
   }
 
-  public async createOwnershipNFTMetadata(data: OwnershipNftMetadataDeployData): Promise<{ url: string }> {
+  public async createOwnershipNFTMetadata(data: NftMetadata): Promise<{ url: string }> {
     return this.POST(TokenAsAServiceDeployerHttpService.DEPLOY_OWNERSHIP_NFT, data);
   }
 }
