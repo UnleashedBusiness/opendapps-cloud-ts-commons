@@ -4,7 +4,7 @@ import {BlockchainDefinition, EmptyAddress, type ReadOnlyWeb3Connection} from '@
 import DecentralizedEntityDeployment from '../../../web2/data/deployment/decentralized-entity-deployment.js';
 import {Web3ServicesContainer} from '../../../web3-services.container.js';
 import {HttpServicesContainer} from '../../../http-services.container.js';
-import {Web3BatchRequest} from 'web3-core';
+import type {BatchRequest} from '@unleashed-business/ts-web3-commons/dist/contract/utils/batch-request.js';
 
 export class SingleOwnerEntityData extends BaseDecentralizedEntityData {
     private _owner: string = EmptyAddress;
@@ -42,10 +42,9 @@ export class SingleOwnerEntityData extends BaseDecentralizedEntityData {
     async loadTypeSpecifics(
         _: boolean,
         config: BlockchainDefinition,
-        web3Batch?: Web3BatchRequest,
+        web3Batch?: BatchRequest,
     ): Promise<void> {
-        this.web3.singleOwnerEntity.views
-            .owner<string>(config, this.address, {}, web3Batch)
-            .then((result) => this._owner = result);
+        await this.web3.singleOwnerEntity.views
+            .owner<string>(config, this.address, {}, web3Batch, (result) => this._owner = result);
     }
 }

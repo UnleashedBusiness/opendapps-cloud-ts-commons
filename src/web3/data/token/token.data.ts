@@ -10,9 +10,9 @@ import {EventEmitter} from '@unleashed-business/ts-web3-commons/dist/utils/event
 import TokenDeployment from '../../../web2/data/deployment/token-deployment.js';
 import {Web3ServicesContainer} from '../../../web3-services.container.js';
 import {HttpServicesContainer} from '../../../http-services.container.js';
-import {Web3BatchRequest} from 'web3-core';
-import {bigNumberPipe, scaleForTokenPipe} from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils.js';
 import type {NftMetadata} from "../../../web2/data/base/nft/nft-metadata.js";
+import {BatchRequest} from '@unleashed-business/ts-web3-commons/dist/contract/utils/batch-request.js';
+import {bn_wrap} from "@unleashed-business/ts-web3-commons/dist/utils/big-number.utils.js";
 
 export class TokenData implements Web3DataInterface {
     private static availableRouterCache?: string[];
@@ -166,48 +166,41 @@ export class TokenData implements Web3DataInterface {
     async load(
         useCaching: boolean,
         config: BlockchainDefinition,
-        web3Batch?: Web3BatchRequest,
+        web3Batch?: BatchRequest,
         timeout?: number,
     ): Promise<void> {
-        const batch = web3Batch ?? new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+        const web3Connection = this.connection.getWeb3ReadOnly(config);
+        const batch = web3Batch ?? new BatchRequest(web3Connection);
 
         let contractDeployer: string;
         let tokenDeployer: string;
         const tokenAsAServiceContract = this.web3.tokenAsAService.readOnlyInstance(config, this.address);
 
-        const initialsBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
-        this.web3.openDAppsCloudRouter.views
-            .contractDeployer<string>(config, this.routerAddress, {}, initialsBatch)
-            .then((x: string) => (contractDeployer = x));
-        this.web3.openDAppsCloudRouter.views
-            .tokenAsAServiceDeployer<string>(config, this.routerAddress, {}, initialsBatch)
-            .then((x: string) => (tokenDeployer = x));
+        const initialsBatch = new BatchRequest(web3Connection);
+        await this.web3.openDAppsCloudRouter.views
+            .contractDeployer<string>(config, this.routerAddress, {}, initialsBatch, x => (contractDeployer = x));
+        await this.web3.openDAppsCloudRouter.views
+            .tokenAsAServiceDeployer<string>(config, this.routerAddress, {}, initialsBatch, x => (tokenDeployer = x));
 
-        tokenAsAServiceContract
-            .decimals<NumericResult>({}, initialsBatch)
-            .then(bigNumberPipe)
-            .then((result) => (this._decimals = result.toNumber()));
-        tokenAsAServiceContract.owner({}, initialsBatch).then((x) => (this._owner = x as string));
+        await tokenAsAServiceContract
+            .decimals<NumericResult>({}, initialsBatch, result => this._decimals = bn_wrap(result).toNumber());
+        await tokenAsAServiceContract.owner<string>({}, initialsBatch, x => this._owner = x);
 
         if (this._initialLoading || !useCaching) {
             try {
-                tokenAsAServiceContract
-                    .ownershipCollection({}, initialsBatch)
-                    .then((value) => (this._ownershipCollection = value as string));
-                tokenAsAServiceContract
-                    .isOwnedByNFT<boolean>({}, initialsBatch)
-                    .then((value) => (this._isOwnedByNFT = value as boolean));
+                await tokenAsAServiceContract
+                    .ownershipCollection({}, initialsBatch, (value) => (this._ownershipCollection = value as string));
+                await tokenAsAServiceContract
+                    .isOwnedByNFT<boolean>({}, initialsBatch, (value) => (this._isOwnedByNFT = value as boolean));
 
-                await initialsBatch.execute();
+                await initialsBatch.execute({timeout: 10_000});
             } catch (e) {
                 this._isOwnedByNFT = this._ownershipCollection !== EmptyAddress;
             }
 
             if (this._isOwnedByNFT) {
-                tokenAsAServiceContract
-                    .ownershipTokenId<NumericResult>({}, batch)
-                    .then(bigNumberPipe)
-                    .then((result) => this._ownershipTokenId = result.toNumber());
+                await tokenAsAServiceContract
+                    .ownershipTokenId<NumericResult>({}, batch, (result) => this._ownershipTokenId = bn_wrap(result).toNumber());
 
                 this._imageLoading = true;
                 this.web2.nftProxy
@@ -229,77 +222,66 @@ export class TokenData implements Web3DataInterface {
                     });
             }
         } else {
-            await initialsBatch.execute();
+            await initialsBatch.execute({timeout: 10_000});
         }
 
         if (!this.hasTreasury) {
             if (TokenData.availableRouterCache === undefined) {
                 TokenData.availableRouterCache = await this.web3.tokenAsAServiceDeployer.views
-                    .availableDexRouters<string[]>(config, tokenDeployer!, {});
+                    .availableDexRouters<string[]>(config, tokenDeployer!, {}) as string[];
             }
 
-            const factoryBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+            const factoryBatch = new BatchRequest(web3Connection);
 
             for (const routerAddress of TokenData.availableRouterCache) {
                 if (TokenData.availableRouterCacheFactories[routerAddress] === undefined) {
-                    this.web3.uniswapRouter.views
-                        .factory<string>(config, routerAddress, {}, factoryBatch)
-                        .then((x: string) => (TokenData.availableRouterCacheFactories[routerAddress] = x));
+                    await this.web3.uniswapRouter.views
+                        .factory<string>(config, routerAddress, {}, factoryBatch, x => (TokenData.availableRouterCacheFactories[routerAddress] = x));
                 }
 
                 if (TokenData.availableRouterCacheWETH[routerAddress] === undefined) {
-                    this.web3.uniswapRouter.views
-                        .WETH<string>(config, routerAddress, {}, factoryBatch)
-                        .then((x: string) => (TokenData.availableRouterCacheWETH[routerAddress] = x));
+                    await this.web3.uniswapRouter.views
+                        .WETH<string>(config, routerAddress, {}, factoryBatch, x => (TokenData.availableRouterCacheWETH[routerAddress] = x));
                 }
             }
 
-            await factoryBatch.execute();
+            await factoryBatch.execute({timeout: 10_000});
         }
 
         const contractDeployerContract = this.web3.contractDeployer.readOnlyInstance(config, contractDeployer!);
 
-        contractDeployerContract.isUpgradeable<boolean>({_contract: this.tokenomics}, batch)
-            .then((result) => this._tokenomicsUpgradeable = result);
+        await contractDeployerContract.isUpgradeable<boolean>({_contract: this.tokenomics}, batch, (result) => this._tokenomicsUpgradeable = result);
         if (this.hasStaking) {
-            contractDeployerContract.isUpgradeable<boolean>({_contract: this.staking!}, batch)
-                .then((result) => this._stakingUpgradeable = result);
+            await contractDeployerContract.isUpgradeable<boolean>({_contract: this.staking!}, batch, (result) => this._stakingUpgradeable = result);
         }
         if (this.hasInflation) {
-            contractDeployerContract.isUpgradeable<boolean>({_contract: this.inflation}, batch)
-                .then((result) => this._inflationUpgradeable = result);
+            await contractDeployerContract.isUpgradeable<boolean>({_contract: this.inflation}, batch, (result) => this._inflationUpgradeable = result);
         }
         if (this.hasTreasury) {
-            contractDeployerContract.isUpgradeable<boolean>({_contract: this.treasury}, batch)
-                .then((result) => this._treasuryUpgradeable = result);
+            await contractDeployerContract.isUpgradeable<boolean>({_contract: this.treasury}, batch, (result) => this._treasuryUpgradeable = result);
         }
 
-        this.web3.dymanicTokenomics.views
-            .availableTaxableConfigurations<NumericResult>(config, this.tokenomics, {}, batch)
-            .then(bigNumberPipe)
-            .then((result) => {
-                this._hasComplexType = result.toNumber() > 1;
+        await this.web3.dymanicTokenomics.views
+            .availableTaxableConfigurations<NumericResult>(config, this.tokenomics, {}, batch, (result) => {
+                this._hasComplexType = bn_wrap(result).toNumber() > 1;
             });
 
         if (this._initialLoading || !useCaching) {
-            tokenAsAServiceContract.symbol({}, batch).then((result) => (this._symbol = result as string));
-            tokenAsAServiceContract.name({}, batch).then((result) => (this._name = result as string));
+            await tokenAsAServiceContract.symbol({}, batch, (result) => (this._symbol = result as string));
+            await tokenAsAServiceContract.name({}, batch, (result) => (this._name = result as string));
         }
-        tokenAsAServiceContract
-            .totalSupply<NumericResult>({}, batch)
-            .then(bigNumberPipe)
-            .then(scaleForTokenPipe(config, this.web3.token, this.address))
-            .then((result) => (this._totalSupply = result));
+        await tokenAsAServiceContract
+            .totalSupply<NumericResult>({}, batch, (result) => (this._totalSupply = bn_wrap(result).dividedBy(10 ** this._decimals)));
 
         if (this.hasTreasury) {
-            this.web3.tokenLiquidityTreasury.views.getTokenDexListings(config, this.treasury, {}, batch).then((result) => {
+            await this.web3.tokenLiquidityTreasury.views.getTokenDexListings(config, this.treasury, {}, batch, (result) => {
                 this._dexListings = result as string[];
             });
         } else {
             this._dexListings = [];
 
             for (const routerAddress of TokenData.availableRouterCache!) {
-                this.web3.uniswapRouter.views
+                await this.web3.uniswapRouter.views
                     .getAmountsOut<NumericResult>(
                         config,
                         routerAddress,
@@ -307,8 +289,8 @@ export class TokenData implements Web3DataInterface {
                             amountIn: 10 ** 18,
                             path: [this.address, TokenData.availableRouterCacheWETH[routerAddress]],
                         },
-                        batch)
-                    .then(() => this._dexListings.push(routerAddress))
+                        batch,
+                        () => this._dexListings.push(routerAddress))
                     .catch(() => console.warn(`Token ${this.address} is not listed on dex ${routerAddress}`));
             }
         }
@@ -327,7 +309,7 @@ export class TokenData implements Web3DataInterface {
         ];
 
         if (web3Batch === undefined) {
-            promises.push(batch.execute({timeout: timeout}));
+            promises.push(batch.execute({timeout: timeout ?? 10_000}));
         }
 
         await Promise.all(promises);

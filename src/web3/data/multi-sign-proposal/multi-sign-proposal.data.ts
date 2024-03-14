@@ -2,13 +2,13 @@ import { GovernanceProposalData, GovernanceProposalSignatureType } from './base/
 import { ProposalWithStateData } from '../../../web2/data/multi-sign-proposal/proposal-with-state.data.js';
 import { Web3ServicesContainer } from '../../../web3-services.container.js';
 import { HttpServicesContainer } from '../../../http-services.container.js';
-import { Web3BatchRequest } from 'web3-core';
 import {
   BlockchainDefinition,
   type NumericResult,
   type ReadOnlyWeb3Connection
 } from '@unleashed-business/ts-web3-commons';
-import { bigNumberPipe } from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils.js';
+import type { BatchRequest } from '@unleashed-business/ts-web3-commons/dist/contract/utils/batch-request.js';
+import {bn_wrap} from "@unleashed-business/ts-web3-commons/dist/utils/big-number.utils.js";
 
 export class MultiSignProposalData extends GovernanceProposalData {
   private availableRootSignaturesCount = 0;
@@ -69,45 +69,33 @@ export class MultiSignProposalData extends GovernanceProposalData {
   protected async loadAdditionalData(
     _: boolean,
     config: BlockchainDefinition,
-    web3Batch?: Web3BatchRequest,
+    web3Batch?: BatchRequest,
   ): Promise<void> {
     const entityContract = this.web3.multiSignEntity.readOnlyInstance(config, this.proposal.entityAddress);
 
-    entityContract
-      .requiredRootSignatures<NumericResult>({}, web3Batch)
-      .then(bigNumberPipe)
-      .then((result) => {
-        this.requiredRootSignaturesCount = result.toNumber();
+    await entityContract
+      .requiredRootSignatures<NumericResult>({}, web3Batch, (result) => {
+        this.requiredRootSignaturesCount = bn_wrap(result).toNumber();
       });
-    entityContract
-      .requiredTotalSignatures<NumericResult>({}, web3Batch)
-      .then(bigNumberPipe)
-      .then((result) => {
-        this.requiredTotalSignaturesCount = result.toNumber();
+    await entityContract
+      .requiredTotalSignatures<NumericResult>({}, web3Batch, (result) => {
+        this.requiredTotalSignaturesCount = bn_wrap(result).toNumber();
       });
-    entityContract
-      .availableRootSignatures<NumericResult>({}, web3Batch)
-      .then(bigNumberPipe)
-      .then((result) => {
-        this.availableRootSignaturesCount = result.toNumber();
+    await entityContract
+      .availableRootSignatures<NumericResult>({}, web3Batch, (result) => {
+        this.availableRootSignaturesCount = bn_wrap(result).toNumber();
       });
-    entityContract
-      .availableTotalSignatures<NumericResult>({}, web3Batch)
-      .then(bigNumberPipe)
-      .then((result) => {
-        this.availableTotalSignaturesCount = result.toNumber();
+    await entityContract
+      .availableTotalSignatures<NumericResult>({}, web3Batch, (result) => {
+        this.availableTotalSignaturesCount = bn_wrap(result).toNumber();
       });
-    entityContract
-      .currentRootSignatures<NumericResult>({ proposalId: this.proposal.proposalId }, web3Batch)
-      .then(bigNumberPipe)
-      .then((result) => {
-        this.currentRootSignaturesCount = result.toNumber();
+    await entityContract
+      .currentRootSignatures<NumericResult>({ proposalId: this.proposal.proposalId }, web3Batch, (result) => {
+        this.currentRootSignaturesCount = bn_wrap(result).toNumber();
       });
-    entityContract
-      .currentTotalSignatures<NumericResult>({ proposalId: this.proposal.proposalId }, web3Batch)
-      .then(bigNumberPipe)
-      .then((result) => {
-        this.currentTotalSignaturesCount = result.toNumber();
+    await entityContract
+      .currentTotalSignatures<NumericResult>({ proposalId: this.proposal.proposalId }, web3Batch, (result) => {
+        this.currentTotalSignaturesCount = bn_wrap(result).toNumber();
       });
   }
 }
