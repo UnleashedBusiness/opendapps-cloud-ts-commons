@@ -16,7 +16,7 @@
     "/dist"
   ],
   "dependencies": {
-    "@unleashed-business/ts-web3-commons": "^6.0.1",
+    "@unleashed-business/ts-web3-commons": "^6.0.3-beta.2",
     "@unleashed-business/opendapps-cloud-ts-abi": "^2.7.0"
   },
   "peerDependencies": {
