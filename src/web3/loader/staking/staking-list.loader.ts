@@ -19,7 +19,7 @@ export async function loadStakingListData(
 ): Promise<StakingListData> {
     const organizations = await httpServices.decentralizedEntity.memberOf(config.networkId, forWallet);
     const poolOwnerQuery = [forWallet, ...organizations];
-    const stakingPools = await httpServices.stakingAsAService.ownerOfMulti(config.networkId, poolOwnerQuery);
+    const stakingPools = await httpServices.ownership.ownerOfMulti(config.networkId, poolOwnerQuery, 'Staking');
     const stakingPoolsFlattened = Object.values(stakingPools).flat();
     const stakingPoolDeployments = stakingPoolsFlattened.length > 0
         ? await httpServices.deployment.fetchMulti<StakingDeployment>(config.networkId, stakingPoolsFlattened)

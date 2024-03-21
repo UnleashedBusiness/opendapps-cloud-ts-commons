@@ -13,7 +13,6 @@ export * from './web3/data/multi-sign-proposal/multi-sign-proposal.data.js';
 export * from './web3/data/multi-sign-proposal/governance-proposal.factory.js';
 export * from './web3/data/multi-sign-proposal/multi-sign-shares-proposal.data.js';
 export * from './web3/data/presale/presale.data.js';
-export * from './web3/data/presale/presale.data.js';
 
 export * from './web3/loader/staking/staking-list.loader.js';
 export * from './web3/loader/staking/staking-list.data.js';
@@ -24,6 +23,7 @@ export * from './web2/deployment.http.service.js'
 export * from './web2/multi-sign-proposal-http.service.js'
 export * from './web2/token-as-a-service-deployer-http.service.js'
 export * from './web2/nft-proxy-http.service.js'
+export * from './web2/ownership-http.service.js'
 export * from './web2/stats-http.service.js'
 
 export * from './web2/data/base/nft/nft-metadata.js'
