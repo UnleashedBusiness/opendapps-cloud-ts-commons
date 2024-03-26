@@ -64,11 +64,11 @@ export class MultiSignSharesProposalData extends GovernanceProposalData {
         const {collection, token} = MultiSignSharesProposalData.companyOwnershipTokenCache[this.proposal.entityAddress];
 
         await this.web3.ownershipSharesNFTCollection.views
-            .totalSupply<NumericResult>(config, collection, {id: token}, web3Batch, (result) => {
+            .totalSupply<NumericResult>(config, collection, {id: token.toFixed()}, web3Batch, (result) => {
                 this.availableShares = bn_wrap(result).toNumber();
             });
         await entityContract
-            .requiredSignatures<NumericResult>({'': this.proposal.proposalId}, web3Batch, (result) => {
+            .requiredSignatures<NumericResult>({"0": this.proposal.proposalId}, web3Batch, (result) => {
                 this.requiredSharesSigned = bn_wrap(result).toNumber();
             });
         await entityContract

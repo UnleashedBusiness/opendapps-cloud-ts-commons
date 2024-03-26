@@ -286,7 +286,7 @@ export class TokenData implements Web3DataInterface {
                         config,
                         routerAddress,
                         {
-                            amountIn: 10 ** 18,
+                            amountIn: (10 ** 18).toFixed(),
                             path: [this.address, TokenData.availableRouterCacheWETH[routerAddress]],
                         },
                         batch,
