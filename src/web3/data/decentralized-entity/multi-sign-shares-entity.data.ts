@@ -72,14 +72,14 @@ export class MultiSignSharesEntityData extends BaseDecentralizedEntityData {
             this.deployment.ownershipCollection!,
         );
         await ownershipCollectionContract
-            .totalSupply<NumericResult>({id: this.deployment.tokenId!.toFixed()}, web3Batch, (result) => {
+            .totalSupply<NumericResult>({id: this.deployment.tokenId!}, web3Batch, (result) => {
                 this._totalShares = bn_wrap(result).toNumber();
             });
 
         for (let i = 0; i < this._teamMembers.length; i++) {
             await ownershipCollectionContract
                 .balanceOf<NumericResult>({
-                    id: this.deployment.tokenId!.toFixed(),
+                    id: this.deployment.tokenId!,
                     account: this._teamMembers[i]
                 }, web3Batch, (result) => {
                     const resultBN = bn_wrap(result);
