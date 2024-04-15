@@ -40,6 +40,10 @@ import type {
 import type {
     TreasuryDeployerAbiFunctional
 } from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/treasury-deployer.abi.js";
+import type {VestingAbiFunctional} from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/vesting.abi.js";
+import type {
+    VestingDeployerAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/vesting-deployer.abi.js";
 
 export class Web3ServicesContainer {
     constructor(
@@ -74,6 +78,8 @@ export class Web3ServicesContainer {
         public readonly treasuryService: Web3Contract<TreasuryAbiFunctional>,
         public readonly treasuryPocket: Web3Contract<TreasuryPocketAbiFunctional>,
         public readonly treasuryDeployer: Web3Contract<TreasuryDeployerAbiFunctional>,
+        public readonly vestingService: Web3Contract<VestingAbiFunctional>,
+        public readonly vestingDeployer: Web3Contract<VestingDeployerAbiFunctional>,
     ) {
     }
 }

@@ -10,14 +10,14 @@ import {
 import {EventEmitter} from '@unleashed-business/ts-web3-commons/dist/utils/event-emitter.js';
 import {Web3ServicesContainer} from '../../../web3-services.container.js';
 import {HttpServicesContainer} from '../../../http-services.container.js';
-import {Web3BatchRequest} from 'web3-core';
-import {bigNumberPipe, scalePipe} from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils.js';
+import {bigNumberPipe} from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils.js';
 import {PresaleDeployment} from '../../../web2/data/deployment/presale-deployment.js';
 import {bn_wrap} from '@unleashed-business/ts-web3-commons/dist/utils/big-number.utils.js';
 import {
     type PresaleServiceAbiFunctional
 } from '@unleashed-business/opendapps-cloud-ts-abi/dist/abi/presale-service.abi.js';
 import type {NftMetadata} from "../../../web2/data/base/nft/nft-metadata.js";
+import {BatchRequest} from '@unleashed-business/ts-web3-commons/dist/contract/utils/batch-request.js';
 
 export class PresaleData implements Web3DataInterface {
     private static _decimalCache: Record<string, number> = {};
@@ -158,130 +158,108 @@ export class PresaleData implements Web3DataInterface {
     async load(
         useCaching: boolean,
         config: BlockchainDefinition,
-        web3Batch?: Web3BatchRequest,
+        web3Batch?: BatchRequest,
         timeout?: number,
         extended?: boolean,
     ): Promise<void> {
-        const batch = web3Batch ?? new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+        const web3Connection = this.connection.getWeb3ReadOnly(config);
+        const batch = web3Batch ?? new BatchRequest(web3Connection);
         const loadAll = extended ?? false;
 
         let presaleDeployer: string;
         const presaleContract = this.web3.presaleService.readOnlyInstance(config, this.deployment.address);
-        const initialBatch = new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+        const initialBatch = new BatchRequest(web3Connection);
 
         if (this._initialLoading || !useCaching) {
             this._forToken.address = this.deployment.token;
             this._forToken.decimals = await this.getTokenDecimals(config, this._forToken.address);
 
-            presaleContract.isExternalToken<boolean>({}, batch)
-                .then((x: boolean) => {
-                    this._isExternalToken = x as boolean;
-                    this._imageLoading = true;
+            await presaleContract.isExternalToken<boolean>({}, batch, (x: boolean) => {
+                this._isExternalToken = x as boolean;
+                this._imageLoading = true;
 
-                    this.web2.nftProxy
-                        .getTokenMetadata(config.networkId, this._forToken.address)
-                        .then((metadata: NftMetadata) => {
-                            if (metadata.image !== '') {
-                                this.web2.nftProxy.getTokenImageUrl(config.networkId, this._forToken.address)
-                                    .then((value: string) => {
-                                        this._imageUrl = value;
-                                        this._imageLoading = false;
-                                        this.imageAvailableEvent.emit(value);
-                                    });
-                            } else {
-                                this._imageLoading = false;
-                            }
-                        })
-                        .catch(() => {
+                this.web2.nftProxy
+                    .getTokenMetadata(config.networkId, this._forToken.address)
+                    .then((metadata: NftMetadata) => {
+                        if (metadata.image !== '') {
+                            this.web2.nftProxy.getTokenImageUrl(config.networkId, this._forToken.address)
+                                .then((value: string) => {
+                                    this._imageUrl = value;
+                                    this._imageLoading = false;
+                                    this.imageAvailableEvent.emit(value);
+                                });
+                        } else {
                             this._imageLoading = false;
-                        });
-                });
+                        }
+                    })
+                    .catch(() => {
+                        this._imageLoading = false;
+                    });
+            });
 
             if (loadAll) {
-                presaleContract
-                    .EXCHANGE_RATE_SCALING<NumericResult>({}, initialBatch)
-                    .then(bigNumberPipe)
-                    .then((result: BigNumber) => this._exchangeScaling = result.toNumber());
-                presaleContract.purchaseToken<string>({}, initialBatch)
-                    .then((x: string) => (this._purchaseToken.address = x));
+                await presaleContract
+                    .EXCHANGE_RATE_SCALING<NumericResult>({}, initialBatch, result => this._exchangeScaling = bn_wrap(result).toNumber());
+                await presaleContract.purchaseToken<string>({}, initialBatch, (x: string) => (this._purchaseToken.address = x));
             }
         }
-        presaleContract
-            .startBlock<NumericResult>({}, loadAll ? initialBatch : batch)
-            .then(bigNumberPipe)
-            .then((x: BigNumber) => {
-                this._isScheduled = x.gt(0);
+        await presaleContract
+            .startBlock<NumericResult>({}, loadAll ? initialBatch : batch, x => {
+                const y = bn_wrap(x);
+                this._isScheduled = y.gt(0);
                 if (this._isScheduled) {
-                    this._startBlock = x;
+                    this._startBlock = y;
                 }
             });
 
         if (loadAll) {
-            this.web3.openDAppsCloudRouter.views
-                .presaleServiceDeployer<string>(config, this.routerAddress, {}, initialBatch)
-                .then((x: string) => (presaleDeployer = x));
+            await this.web3.openDAppsCloudRouter.views
+                .presaleServiceDeployer<string>(config, this.routerAddress, {}, initialBatch, (x: string) => (presaleDeployer = x));
 
-            await Promise.all([initialBatch.execute({timeout: timeout})]);
+            await Promise.all([initialBatch.execute({timeout: timeout ?? 10_000})]);
         }
 
         if (loadAll && (this._initialLoading || !useCaching)) {
             const presaleDeployerContract = this.web3.presaleServiceDeployer.readOnlyInstance(config, presaleDeployer!);
 
-            presaleDeployerContract
-                .minBlocksForStart<NumericResult>({}, batch)
-                .then(bigNumberPipe)
-                .then((x: BigNumber) => (this._minBlockStartDistance = x));
-            presaleDeployerContract
-                .minBlocksDuration<NumericResult>({}, batch)
-                .then(bigNumberPipe)
-                .then((x: BigNumber) => (this._minBlockDuration = x));
+            await presaleDeployerContract
+                .minBlocksForStart<NumericResult>({}, batch, x => (this._minBlockStartDistance = bn_wrap(x)));
+            await presaleDeployerContract
+                .minBlocksDuration<NumericResult>({}, batch, x => (this._minBlockDuration = bn_wrap(x)));
         }
 
-        presaleContract
-            .endBlock<NumericResult>({}, batch)
-            .then(bigNumberPipe)
-            .then((x: BigNumber) => {
-                this._endBlock = x;
-            });
-        presaleContract.isRunning<boolean>({}, batch).then((x: boolean) => (this._isRunning = x));
-        presaleContract.ended<boolean>({}, batch).then((x: boolean) => (this._isFinished = x));
-        presaleContract.reachedSoftCap<boolean>({}, batch).then((x: boolean) => (this._isSuccessful = x));
+        await presaleContract.endBlock<NumericResult>({}, batch, x => this._endBlock = bn_wrap(x));
+        await presaleContract.isRunning<boolean>({}, batch, (x: boolean) => (this._isRunning = x));
+        await presaleContract.ended<boolean>({}, batch, (x: boolean) => (this._isFinished = x));
+        await presaleContract.reachedSoftCap<boolean>({}, batch, (x: boolean) => (this._isSuccessful = x));
 
         if (this._initialLoading || !useCaching) {
-            this.web3.token.views
-                .name<string>(config, this._forToken.address, {}, batch)
-                .then((x: string) => (this._forToken.name = x));
-            this.web3.token.views
-                .symbol<string>(config, this._forToken.address, {}, batch)
-                .then((x: string) => (this._forToken.symbol = x));
+            await this.web3.token.views
+                .name<string>(config, this._forToken.address, {}, batch, (x: string) => (this._forToken.name = x));
+            await this.web3.token.views
+                .symbol<string>(config, this._forToken.address, {}, batch, (x: string) => (this._forToken.symbol = x));
         }
 
-        this.web3.token.views
-            .balanceOf<NumericResult>(config, this._forToken.address, {account: this.address}, batch)
-            .then(bigNumberPipe)
-            .then(scalePipe(bn_wrap(10 ** this._forToken.decimals)))
-            .then((x: BigNumber) => this._availableTokens = x);
-        this.web3.token.views
-            .totalSupply<NumericResult>(config, this._forToken.address, {}, batch)
-            .then(bigNumberPipe)
-            .then(scalePipe(bn_wrap(10 ** this._forToken.decimals)))
-            .then((x: BigNumber) => this._forToken.totalSupply = x);
+        await this.web3.token.views
+            .balanceOf<NumericResult>(
+                config, this._forToken.address, {account: this.address},
+                batch, x => this._availableTokens = bn_wrap(x).dividedBy(10 ** this._forToken.decimals));
+        await this.web3.token.views
+            .totalSupply<NumericResult>(config, this._forToken.address, {},
+                batch, x => this._forToken.totalSupply = bn_wrap(x).dividedBy(10 ** this._forToken.decimals));
 
         if (loadAll && (this._initialLoading || !useCaching)) {
-            this.web3.tokenAsAService.views
-                .owner(config, this._forToken.address, {}, batch)
-                .then((x) => (this._owner = x as string));
+            await this.web3.tokenAsAService.views
+                .owner(config, this._forToken.address, {}, batch, (x) => (this._owner = x as string));
         }
 
         if (loadAll) {
             if (this._purchaseToken.address !== EmptyAddress) {
                 if (this._initialLoading || !useCaching) {
-                    this.web3.token.views
-                        .name<string>(config, this._purchaseToken.address, {}, batch)
-                        .then((x: string) => (this._purchaseToken.name = x));
-                    this.web3.token.views
-                        .symbol<string>(config, this._purchaseToken.address, {}, batch)
-                        .then((x: string) => (this._purchaseToken.symbol = x));
+                    await this.web3.token.views
+                        .name<string>(config, this._purchaseToken.address, {}, batch, (x) => (this._purchaseToken.name = x));
+                    await this.web3.token.views
+                        .symbol<string>(config, this._purchaseToken.address, {}, batch, (x) => (this._purchaseToken.symbol = x));
 
                     this._purchaseToken.decimals = await this.getTokenDecimals(config, this._purchaseToken.address);
                 }
@@ -296,54 +274,48 @@ export class PresaleData implements Web3DataInterface {
         }
 
         if (web3Batch === undefined) {
-            await batch.execute({timeout: timeout});
+            await batch.execute({timeout: timeout ?? 10_000});
         }
         this._initialLoading = false;
     }
 
-    private loadPurchaseTokenStuff(
+    private async loadPurchaseTokenStuff(
         presaleContract: FunctionalAbiInstanceViews<PresaleServiceAbiFunctional>,
-        purchaseTokenDecimalsBatch: Web3BatchRequest,
-    ): void {
+        purchaseTokenDecimalsBatch: BatchRequest,
+    ): Promise<void> {
         if (this._isScheduled) {
-            presaleContract
-                .exchangeRate<NumericResult>({}, purchaseTokenDecimalsBatch)
-                .then(bigNumberPipe)
-                .then(scalePipe(bn_wrap(this._exchangeScaling)))
-                .then((x) => (this._exchangeRate = x));
+            await presaleContract
+                .exchangeRate<NumericResult>(
+                    {}, purchaseTokenDecimalsBatch, (x) => (this._exchangeRate = bn_wrap(x).dividedBy(this.exchangeScaling))
+                );
 
-            presaleContract
-                .softCap<NumericResult>({}, purchaseTokenDecimalsBatch)
-                .then(bigNumberPipe)
-                .then(scalePipe(bn_wrap(10 ** this._purchaseToken.decimals)))
-                .then((x) => (this._softCap = x));
-            presaleContract
-                .hardCap<NumericResult>({}, purchaseTokenDecimalsBatch)
-                .then(bigNumberPipe)
-                .then(scalePipe(bn_wrap(10 ** this._purchaseToken.decimals)))
-                .then((x) => (this._hardCap = x));
-            presaleContract
-                .currentCap<NumericResult>({}, purchaseTokenDecimalsBatch)
-                .then(bigNumberPipe)
-                .then(scalePipe(bn_wrap(10 ** this._purchaseToken.decimals)))
-                .then((x) => (this._currentCap = x));
-            presaleContract
-                .minPerWallet<NumericResult>({}, purchaseTokenDecimalsBatch)
-                .then(bigNumberPipe)
-                .then(scalePipe(bn_wrap(10 ** this._purchaseToken.decimals)))
-                .then((x) => (this._minPerWallet = x));
-            presaleContract
-                .maxPerWallet<NumericResult>({}, purchaseTokenDecimalsBatch)
-                .then(bigNumberPipe)
-                .then(scalePipe(bn_wrap(10 ** this._purchaseToken.decimals)))
-                .then((x) => (this._maxPerWallet = x));
+            await presaleContract
+                .softCap<NumericResult>(
+                    {}, purchaseTokenDecimalsBatch, (x) => (this._softCap = bn_wrap(x).dividedBy(10 ** this._purchaseToken.decimals))
+                );
+            await presaleContract
+                .hardCap<NumericResult>(
+                    {}, purchaseTokenDecimalsBatch, (x) => (this._hardCap = bn_wrap(x).dividedBy(10 ** this._purchaseToken.decimals))
+                );
+            await presaleContract
+                .currentCap<NumericResult>(
+                    {}, purchaseTokenDecimalsBatch, (x) => (this._currentCap = bn_wrap(x).dividedBy(10 ** this._purchaseToken.decimals))
+                );
+            await presaleContract
+                .minPerWallet<NumericResult>(
+                    {}, purchaseTokenDecimalsBatch, (x) => (this._minPerWallet = bn_wrap(x).dividedBy(10 ** this._purchaseToken.decimals))
+                );
+            await presaleContract
+                .maxPerWallet<NumericResult>(
+                    {}, purchaseTokenDecimalsBatch, (x) => (this._maxPerWallet = bn_wrap(x).dividedBy(10 ** this._purchaseToken.decimals))
+                );
         }
     }
 
     private async getTokenDecimals(config: BlockchainDefinition, token: string): Promise<number> {
         if (typeof PresaleData._decimalCache[token] === "undefined") {
             PresaleData._decimalCache[token] = await this.web3.token.views.decimals<NumericResult>(config, token, {})
-                .then(bigNumberPipe)
+                .then((x: NumericResult | void) => bigNumberPipe(x as NumericResult))
                 .then((value: BigNumber) => value.toNumber());
         }
         return PresaleData._decimalCache[token];

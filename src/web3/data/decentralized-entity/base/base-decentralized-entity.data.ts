@@ -6,11 +6,11 @@ import {
     DefaultEVMNativeTokenDecimals,
     type ReadOnlyWeb3Connection,
 } from '@unleashed-business/ts-web3-commons';
-import {Web3BatchRequest} from 'web3-core';
 import {Web3ServicesContainer} from '../../../../web3-services.container.js';
 import {HttpServicesContainer} from '../../../../http-services.container.js';
 import {EventEmitter} from '@unleashed-business/ts-web3-commons/dist/utils/event-emitter.js';
 import type {NftMetadata} from "../../../../web2/data/base/nft/nft-metadata.js";
+import {BatchRequest} from '@unleashed-business/ts-web3-commons/dist/contract/utils/batch-request.js';
 
 export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
     protected _initialLoading = false;
@@ -83,11 +83,12 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
     public async load(
         useCaching: boolean,
         config: BlockchainDefinition,
-        web3Batch?: Web3BatchRequest,
+        web3Batch?: BatchRequest,
         timeout?: number,
     ): Promise<void> {
         await this.refreshFunds(config);
-        const batch = web3Batch ?? new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+        const web3Connection = this.connection.getWeb3ReadOnly(config);
+        const batch = web3Batch ?? new BatchRequest(web3Connection);
 
         const loadMetadata = !this._initialLoading || !useCaching;
 
@@ -97,7 +98,7 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
             this.web2.decentralizedEntity.members(config.networkId, this.address),
             this.web3.openDAppsCloudRouter.views
                 .contractDeployer<string>(config, this.routerAddress, {})
-                .then((r: string) => r),
+                .then(r => r as string),
         ]);
         this._teamMembers = teamMembers;
 
@@ -130,16 +131,14 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
 
         await this.loadTypeSpecifics(useCaching, config, batch);
 
-        this.web3.contractDeployer.views
-            .isUpgradeable(config, contractDeployer, {_contract: this.rewardsTreasury}, batch)
-            .then((result) => (this._treasuryUpgradeable = result as boolean));
+        await this.web3.contractDeployer.views
+            .isUpgradeable<boolean>(config, contractDeployer, {_contract: this.rewardsTreasury}, batch, (result) => (this._treasuryUpgradeable = result));
 
-        this.web3.decentralizedEntityInterface.views
-            .name(config, this.address, {}, batch)
-            .then((result) => (this._name = result as string));
+        await this.web3.decentralizedEntityInterface.views
+            .name<string>(config, this.address, {}, batch, (result) => (this._name = result));
 
         if (web3Batch === undefined) {
-            promises.push(batch.execute({timeout: timeout}));
+            promises.push(batch.execute({timeout: timeout ?? 10_000}));
         }
 
         await Promise.all(promises);
@@ -148,7 +147,7 @@ export abstract class BaseDecentralizedEntityData implements Web3DataInterface {
     public abstract loadTypeSpecifics(
         useCaching: boolean,
         config: BlockchainDefinition,
-        web3Batch?: Web3BatchRequest,
+        web3Batch?: BatchRequest,
     ): Promise<void>;
 
     public toBasicData(): { name: string; type: number; address: string } {

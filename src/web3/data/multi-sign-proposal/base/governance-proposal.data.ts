@@ -1,7 +1,6 @@
 import {ProposalWithStateData} from '../../../../web2/data/multi-sign-proposal/proposal-with-state.data.js';
 import {HttpServicesContainer} from '../../../../http-services.container.js';
 import {Web3ServicesContainer} from '../../../../web3-services.container.js';
-import {Web3BatchRequest} from 'web3-core';
 import {FMT_BYTES, FMT_NUMBER} from 'web3-types';
 import {
     BlockchainDefinition,
@@ -12,6 +11,7 @@ import {type Web3DataInterface} from '../../base/web3-data.interface.js';
 import {bigNumberPipe} from '@unleashed-business/ts-web3-commons/dist/utils/contract-pipe.utils.js';
 import {BigNumber} from "bignumber.js";
 import {bn_wrap} from "@unleashed-business/ts-web3-commons/dist/utils/big-number.utils.js";
+import {BatchRequest} from '@unleashed-business/ts-web3-commons/dist/contract/utils/batch-request.js';
 
 export abstract class GovernanceProposalData implements Web3DataInterface {
     private _state: number = 0;
@@ -55,7 +55,7 @@ export abstract class GovernanceProposalData implements Web3DataInterface {
     async load(
         useCaching: boolean,
         config: BlockchainDefinition,
-        web3Batch?: Web3BatchRequest,
+        web3Batch?: BatchRequest,
         timeout?: number,
         currentBlockExternal?: BigNumber
     ): Promise<void> {
@@ -66,29 +66,24 @@ export abstract class GovernanceProposalData implements Web3DataInterface {
                 bytes: FMT_BYTES.HEX,
             }).then(bigNumberPipe);
 
-        const batch = web3Batch ?? new (this.connection.getWeb3ReadOnly(config).BatchRequest)();
+        const web3Connection = this.connection.getWeb3ReadOnly(config);
+        const batch = web3Batch ?? new BatchRequest(web3Connection);
         const governorContract = this.web3.governorInterface.readOnlyInstance(config, this.proposal.entityAddress);
 
-        governorContract
-            .proposalState<NumericResult>({proposalId: this.proposal.proposalId}, batch)
-            .then(bigNumberPipe)
-            .then((result) => {
-                this._state = result.toNumber();
+        await governorContract
+            .proposalState<NumericResult>({proposalId: this.proposal.proposalId}, batch, (result) => {
+                this._state = bn_wrap(result).toNumber();
             });
 
-        governorContract
-            .proposalVoteStartBlock<NumericResult>({proposalId: this.proposal.proposalId}, batch)
-            .then(bigNumberPipe)
-            .then((result) => {
-                this._votingStartBlock = result;
+        await governorContract
+            .proposalVoteStartBlock<NumericResult>({proposalId: this.proposal.proposalId}, batch, (result) => {
+                this._votingStartBlock = bn_wrap(result);
                 this._votingStartBlockDiff = this._votingStartBlock.minus(currentBlock).abs();
             });
 
-        governorContract
-            .proposalVoteEndBlock<NumericResult>({proposalId: this.proposal.proposalId}, batch)
-            .then(bigNumberPipe)
-            .then((result) => {
-                this._votingEndBlock = result;
+        await governorContract
+            .proposalVoteEndBlock<NumericResult>({proposalId: this.proposal.proposalId}, batch, (result) => {
+                this._votingEndBlock = bn_wrap(result);
                 this._votingEndBlockDiff = this._state == 1 || this._votingEndBlock.lt(currentBlock)
                     ? this._votingEndBlock.minus(currentBlock).abs()
                     : bn_wrap(1);
@@ -97,14 +92,14 @@ export abstract class GovernanceProposalData implements Web3DataInterface {
         await this.loadAdditionalData(useCaching, config, batch);
 
         if (web3Batch === undefined) {
-            await batch.execute({timeout});
+            await batch.execute({timeout: timeout ?? 10_000});
         }
     }
 
     protected abstract loadAdditionalData(
         useCaching: boolean,
         config: BlockchainDefinition,
-        web3Batch?: Web3BatchRequest,
+        web3Batch?: BatchRequest,
     ): Promise<void>;
 }
 
