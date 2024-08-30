@@ -1,5 +1,6 @@
 import DeploymentBase from "./data/deployment/base/deployment.base.js";
 import {BaseHttpService} from "./base/base-http.service.js";
+import {BigNumber} from "bignumber.js";
 
 export class DeploymentHttpService extends BaseHttpService {
     private static readonly ADDR_PREFIX = '/backend/deployment';
@@ -28,7 +29,7 @@ export class DeploymentHttpService extends BaseHttpService {
         return this.GET(relativePath);
     }
 
-    public async list<T extends DeploymentBase>(chainId: number, type: string, take?: number, skip?: number): Promise<T[]> {
+    public async list<T extends DeploymentBase>(chainId: number, type: string, take?: number, skip?: number, minHeight?: BigNumber): Promise<T[]> {
         let relativePath = DeploymentHttpService.LIST
             .replace("{chainId}", chainId.toString());
 
@@ -38,6 +39,9 @@ export class DeploymentHttpService extends BaseHttpService {
         }
         if (skip !== undefined) {
             relativePath += `&skip=${skip}`;
+        }
+        if (minHeight !== undefined) {
+            relativePath += `&minHeight=${minHeight.toFixed()}`
         }
 
         return this.GET(relativePath);

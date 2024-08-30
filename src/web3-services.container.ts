@@ -47,6 +47,10 @@ import type {
 import type {
     MultiAssetBackingAbiFunctional
 } from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/multi-asset-backing.abi.js";
+import type {DistributorAbiFunctional} from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/distributor.abi.js";
+import type {
+    DistributorDeployerAbiFunctional
+} from "@unleashed-business/opendapps-cloud-ts-abi/dist/abi/distributor-deployer.abi.js";
 
 export class Web3ServicesContainer {
     constructor(
@@ -84,6 +88,8 @@ export class Web3ServicesContainer {
         public readonly treasuryDeployer: Web3Contract<TreasuryDeployerAbiFunctional>,
         public readonly vestingService: Web3Contract<VestingAbiFunctional>,
         public readonly vestingDeployer: Web3Contract<VestingDeployerAbiFunctional>,
+        public readonly distributor: Web3Contract<DistributorAbiFunctional>,
+        public readonly distributorDeployer: Web3Contract<DistributorDeployerAbiFunctional>,
     ) {
     }
 }
