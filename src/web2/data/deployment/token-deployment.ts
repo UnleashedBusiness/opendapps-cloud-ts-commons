@@ -5,6 +5,7 @@ export default class TokenDeployment extends DeploymentBase {
     address: string,
     group: string,
     deployer: string,
+    deploymentHeight: string,
     deployedOn: Date,
     public readonly type: string,
     public readonly tokenomics: string,
@@ -13,6 +14,6 @@ export default class TokenDeployment extends DeploymentBase {
     public readonly staking?: string,
     public readonly assetBacking?: string,
   ) {
-    super(address, group, deployer, deployedOn);
+    super(address, group, deployer, deploymentHeight, deployedOn);
   }
 }
