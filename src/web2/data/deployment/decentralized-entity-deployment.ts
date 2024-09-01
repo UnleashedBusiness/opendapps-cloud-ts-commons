@@ -5,12 +5,13 @@ export default class DecentralizedEntityDeployment extends DeploymentBase {
         address: string,
         group: string,
         deployer: string,
+        deploymentHeight: string,
         deployedOn: Date,
         public readonly treasury: string,
         public readonly type: string,
         public readonly ownershipCollection?: string,
         public readonly tokenId?: number,
     ) {
-        super(address, group, deployer, deployedOn);
+        super(address, group, deployer, deploymentHeight, deployedOn);
     }
 }

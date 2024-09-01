@@ -3,6 +3,7 @@ export default abstract class DeploymentBase {
     public readonly address: string,
     public readonly group: string,
     public readonly deployer: string,
+    public readonly deploymentHeight: string,
     public readonly deployedOn: Date,
   ) {
   }

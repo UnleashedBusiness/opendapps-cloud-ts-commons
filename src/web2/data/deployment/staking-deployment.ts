@@ -5,8 +5,9 @@ export default class StakingDeployment extends DeploymentBase {
         address: string,
         group: string,
         deployer: string,
+        deploymentHeight: string,
         deployedOn: Date,
         public readonly token: string) {
-        super(address, group, deployer, deployedOn);
+        super(address, group, deployer, deploymentHeight, deployedOn);
     }
 }
