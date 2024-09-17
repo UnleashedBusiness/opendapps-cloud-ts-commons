@@ -15,8 +15,8 @@ export * from './web3/data/multi-sign-proposal/governance-proposal.factory.js';
 export * from './web3/data/multi-sign-proposal/multi-sign-shares-proposal.data.js';
 export * from './web3/data/presale/presale.data.js';
 
-export * from './web3/loader/staking/staking-list.loader.js';
-export * from './web3/loader/staking/staking-list.data.js';
+export * from './web3/loader/staking/list/staking-list.loader.js';
+export * from './web3/loader/staking/list/staking-list.data.js';
 
 export * from './web2/blocktime-http.service.js'
 export * from './web2/decentralized-entity-http.service.js'
@@ -42,3 +42,8 @@ export * from './web2/data/multi-sign-proposal/proposal-with-state.data.js'
 export * from './web2/data/stats/staking-stats.dto.js'
 export * from './web2/data/stats/token-stats.dto.js'
 export * from './web2/data/stats/token-pair-stats.dto.js'
+
+export * from "./web3/loader/staking/list/staking-list.data.js"
+export * from "./web3/loader/staking/manage/staking-manage.data.js"
+export * from "./web3/loader/staking/deploy/staking-deploy.data.js"
+export * as ODALoaders from './web3/loader/index.js';
