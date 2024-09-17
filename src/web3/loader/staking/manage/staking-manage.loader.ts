@@ -33,22 +33,20 @@ export async function loadStakingManageData(
         return data;
     }
 
-    const contractDeployer = await contractInfraRouter.build(config).contractDeployer;
-
     data.address = stakingAddress;
-    let preloaded: any = {};
 
+    const contractDeployer = await contractInfraRouter.build(config).contractDeployer;
+    const saas = services.web3Services.stakingAsAService.readOnlyInstance(config, stakingAddress);
+
+    let preloaded: any = {};
     const preloadBatch = new BatchRequest(connection);
 
     await services.web3Services.contractDeployer.views
-        .isUpgradeable<boolean>(config, contractDeployer, {_contract: data.address!}, batch, (x) => (data.isUpgradeable = x));
-
-    const saas = services.web3Services.stakingAsAService.readOnlyInstance(config, stakingAddress);
-
+        .isUpgradeable<boolean>(config, contractDeployer, {_contract: data.address!}, preloadBatch, (x) => (data.isUpgradeable = x));
     await Promise.all([
-        saas.rewardTokens<string[]>({}, batch, x => preloaded.rewardTokens = x as Record<number, string>),
-        saas.stakingToken<string>({}, batch, x => data.stakingToken.address = x as string),
-        saas.owner<string>({}, batch, x => data.owner = x as string),
+        saas.rewardTokens<string[]>({}, preloadBatch, x => preloaded.rewardTokens = x as Record<number, string>),
+        saas.stakingToken<string>({}, preloadBatch, x => data.stakingToken.address = x as string),
+        saas.owner<string>({}, preloadBatch, x => data.owner = x as string),
     ]);
 
     await preloadBatch.execute({timeout: 10_000});

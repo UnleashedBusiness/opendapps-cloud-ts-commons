@@ -43,7 +43,7 @@ export async function loadStakingDeployData(
 
     await services.web3Services.stakingAsAServiceDeployer.views.PERCENT_SCALING<NumericResult>(
         config, await contractInfraRouter.build(config).stakingAsAServiceDeployer, {}, batch, response => data!.serviceTaxScaling = bn_wrap(response).toNumber()
-    ).then(x => bn_wrap(x as NumericResult));
+    );
 
     await services.web3Services.stakingAsAServiceDeployer.views
         .serviceTax<NumericResult>(
@@ -62,6 +62,10 @@ export async function loadStakingDeployData(
             batch,
             x => data!.deployTaxGeneral = bn_wrap(x)
         );
+
+    if (externalBatch === undefined) {
+        await batch.execute({timeout: 10_000});
+    }
 
     return data;
 }

@@ -1,4 +1,3 @@
-import {EventEmitter} from "@unleashed-business/ts-web3-commons";
 import {BigNumber} from "bignumber.js";
 
 export class StakingDataForList {
@@ -15,9 +14,6 @@ export class StakingDataForList {
     public deployedOn: Date = new Date();
 
     public imageUrl?: string;
-    public imageLoading = false;
-
-    public readonly imageAvailableEvent: EventEmitter<string> = new EventEmitter<string>();
 }
 
 export class StakingListData {
