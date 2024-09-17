@@ -7,7 +7,9 @@ import {
 import {StakingManageData} from "./staking-manage.data.js";
 import {BatchRequest} from "@unleashed-business/ts-web3-commons/dist/contract/utils/batch-request.js";
 import {loadStakingDeployData} from "../deploy/staking-deploy.loader.js";
-import type {ODAInfraContractRouterInterface} from "../../../commons/oda-infra-contract-router.interface.js";
+import type {
+    ODAInfraContractRouterBuilderInterface,
+} from "../../../commons/oda-infra-contract-router.interface.js";
 import {bn_wrap} from "@unleashed-business/ts-web3-commons/dist/utils/big-number.utils.js";
 import type {LoaderServiceProviderInterface} from "../../shared/loader-service-provider.interface.js";
 import Web3 from "web3";
@@ -15,7 +17,7 @@ import Web3 from "web3";
 export async function loadStakingManageData(
     config: BlockchainDefinition,
     services: LoaderServiceProviderInterface,
-    contractInfraRouter: ODAInfraContractRouterInterface,
+    contractInfraRouter: ODAInfraContractRouterBuilderInterface,
     stakingAddress: string,
     forWallet: string,
 ): Promise<StakingManageData> {
@@ -31,7 +33,7 @@ export async function loadStakingManageData(
         return data;
     }
 
-    const contractDeployer = await contractInfraRouter.contractDeployer;
+    const contractDeployer = await contractInfraRouter.build(config).contractDeployer;
 
     data.address = stakingAddress;
     let preloaded: any = {};

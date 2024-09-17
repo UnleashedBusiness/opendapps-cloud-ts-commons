@@ -1,3 +1,5 @@
+import type {BlockchainDefinition} from "@unleashed-business/ts-web3-commons";
+
 export interface ODAInfraContractRouterInterface {
     get proxyAdmin(): Promise<string>;
     get referralsEngine(): Promise<string>;
@@ -10,4 +12,8 @@ export interface ODAInfraContractRouterInterface {
     get treasuryDeployer(): Promise<string>;
     get vestingDeployer(): Promise<string>;
     get distributorDeployer(): Promise<string>;
+}
+
+export interface ODAInfraContractRouterBuilderInterface {
+    build(config: BlockchainDefinition): ODAInfraContractRouterInterface;
 }

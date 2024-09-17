@@ -6,13 +6,15 @@ import {
 import {bn_wrap} from "@unleashed-business/ts-web3-commons/dist/utils/big-number.utils.js";
 import {BatchRequest} from "@unleashed-business/ts-web3-commons/dist/contract/utils/batch-request.js";
 import Web3 from "web3";
-import type {ODAInfraContractRouterInterface} from "../../../commons/oda-infra-contract-router.interface.js";
+import type {
+    ODAInfraContractRouterBuilderInterface,
+} from "../../../commons/oda-infra-contract-router.interface.js";
 import type {LoaderServiceProviderInterface} from "../../shared/loader-service-provider.interface.js";
 
 export async function loadStakingDeployData(
     config: BlockchainDefinition,
     services: LoaderServiceProviderInterface,
-    contractInfraRouter: ODAInfraContractRouterInterface,
+    contractInfraRouter: ODAInfraContractRouterBuilderInterface,
     forWallet: string,
     data: StakingDeployData | undefined = undefined,
     externalBatch: BatchRequest | undefined = undefined,
@@ -40,13 +42,13 @@ export async function loadStakingDeployData(
     }
 
     await services.web3Services.stakingAsAServiceDeployer.views.PERCENT_SCALING<NumericResult>(
-        config, await contractInfraRouter.stakingAsAServiceDeployer, {}, batch, response => data!.serviceTaxScaling = bn_wrap(response).toNumber()
+        config, await contractInfraRouter.build(config).stakingAsAServiceDeployer, {}, batch, response => data!.serviceTaxScaling = bn_wrap(response).toNumber()
     ).then(x => bn_wrap(x as NumericResult));
 
     await services.web3Services.stakingAsAServiceDeployer.views
         .serviceTax<NumericResult>(
             config,
-            await contractInfraRouter.stakingAsAServiceDeployer,
+            await contractInfraRouter.build(config).stakingAsAServiceDeployer,
             {},
             batch,
             x => data!.serviceTax = bn_wrap(x)
@@ -55,7 +57,7 @@ export async function loadStakingDeployData(
     await services.web3Services.contractDeployer.views
         .deployTaxForAddress<NumericResult>(
             config,
-            await contractInfraRouter.stakingAsAServiceDeployer,
+            await contractInfraRouter.build(config).stakingAsAServiceDeployer,
             {deployer: forWallet, groupHash: Web3.utils.keccak256('Staking'), typeNumber: 0},
             batch,
             x => data!.deployTaxGeneral = bn_wrap(x)
