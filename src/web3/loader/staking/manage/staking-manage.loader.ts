@@ -4,7 +4,7 @@ import {
     EmptyAddress,
     type NumericResult
 } from "@unleashed-business/ts-web3-commons";
-import {StakingManageData} from "./staking-manage.data.js";
+import {StakingManageData, StakingRewardToken} from "./staking-manage.data.js";
 import {BatchRequest} from "@unleashed-business/ts-web3-commons/dist/contract/utils/batch-request.js";
 import {loadStakingDeployData} from "../deploy/staking-deploy.loader.js";
 import type {
@@ -88,7 +88,11 @@ export async function loadStakingManageData(
         })
     ];
 
+    data.rewardTokens = [];
     for (const key in Object.keys(preloaded.rewardTokens)) {
+        data.rewardTokens[key] = new StakingRewardToken();
+        data.rewardTokens[key].address = preloaded.rewardTokens[key];
+
         batchQueries.push(
             saas.totalAvailableRewards<NumericResult>(
                 {token: preloaded.rewardTokens[key]}, batch, (result) => (data.rewardTokens[key].totalAvailableRewards = bn_wrap(result))
@@ -114,6 +118,10 @@ export async function loadStakingManageData(
                 services.web3Services.token.views.decimals<NumericResult>(
                     config, preloaded.rewardTokens[key], {},
                     batch, (result) => (data.rewardTokens[key].decimals = bn_wrap(result).toNumber())
+                ),
+                services.web3Services.token.views.totalSupply<NumericResult>(
+                    config, preloaded.rewardTokens[key], {},
+                    batch, (result) => (data.rewardTokens[key].totalSupply = bn_wrap(result))
                 )
             );
         } else {

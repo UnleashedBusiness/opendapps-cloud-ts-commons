@@ -36,7 +36,10 @@ export async function loadStakingListData(
             owners.push(owner);
 
             await services.web3Services.stakingAsAService.views.owner<string>(
-                config, stakingPoolAddress, {}, ownersBatch, value => owner.address = value
+                config, stakingPoolAddress, {}, ownersBatch, value => owner.address = value,
+                () => {
+                    owner.address = organizationAddress
+                }
             );
         }
     }
@@ -46,8 +49,11 @@ export async function loadStakingListData(
         const owner = {isEntity: false, address: ''};
         owners.push(owner);
 
-        await services.web3Services.tokenAsAService.views.owner<string>(
-            config, stakingPoolAddress, {}, ownersBatch, value => owner.address = value
+        await services.web3Services.stakingAsAService.views.owner<string>(
+            config, stakingPoolAddress, {}, ownersBatch, value => owner.address = value,
+            () => {
+                owner.address = forWallet
+            }
         );
     }
 

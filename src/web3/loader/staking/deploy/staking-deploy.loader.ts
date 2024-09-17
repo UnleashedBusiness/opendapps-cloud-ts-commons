@@ -57,7 +57,7 @@ export async function loadStakingDeployData(
     await services.web3Services.contractDeployer.views
         .deployTaxForAddress<NumericResult>(
             config,
-            await contractInfraRouter.build(config).stakingAsAServiceDeployer,
+            await contractInfraRouter.build(config).contractDeployer,
             {deployer: forWallet, groupHash: Web3.utils.keccak256('Staking'), typeNumber: 0},
             batch,
             x => data!.deployTaxGeneral = bn_wrap(x)
