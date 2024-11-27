@@ -21,7 +21,7 @@ type PayeeExtendedReturnType = {
     pocketPercents: number[]
 };
 
-export async function loadTreasuryListData(
+export async function loadTreasuryManageData(
     config: BlockchainDefinition,
     services: LoaderServiceProviderInterface,
     contractInfraRouter: ODAInfraContractRouterBuilderInterface,
