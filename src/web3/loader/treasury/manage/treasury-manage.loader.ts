@@ -140,6 +140,10 @@ export async function loadTreasuryManageData(
 
     await rewardsExecutor.execute({timeout: 30_000});
 
+    for (const token of data.rewardTokens) {
+        token.total = token.balance.reduce((a, b) => a.plus(b.amount), bn_wrap(0));
+    }
+
     return data;
 }
 

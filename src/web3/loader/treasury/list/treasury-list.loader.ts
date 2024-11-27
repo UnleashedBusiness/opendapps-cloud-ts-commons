@@ -37,7 +37,7 @@ export async function loadTreasuryListData(
             treasuryData.address = treasury;
             treasuryData.owner = owner;
             treasuryData.deployedOn = deployment.deployedOn;
-            treasuryData.nativeBalanceDecimals = DefaultEVMNativeTokenDecimals;
+            treasuryData.nativeBalanceScaling = DefaultEVMNativeTokenDecimals;
 
             executor.add(
                 (batch) => services.web3Services.treasuryService.views.available<NumericResult>(
