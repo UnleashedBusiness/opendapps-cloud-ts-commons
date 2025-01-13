@@ -42,8 +42,15 @@ export async function loadLiquidityMiningData(
 
   if (lmAddress === undefined || lmAddress === EmptyAddress) {
     await BatchExecutor.new(config, services.connection)
-      .add(batch => loadDeployLiquidityMiningDataForObject(config, services, data, batch))
-      .execute();
+      .add(batch => loadDeployLiquidityMiningDataForObject(
+          config,
+          services,
+          contractInfraRouter,
+          data,
+          batch,
+          forWallet,
+        ),
+      ).execute();
 
     return data;
   }
