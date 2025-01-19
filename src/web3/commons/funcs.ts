@@ -5,6 +5,6 @@ export function web3AddressEq(a: string, b: string): boolean {
   return Web3.utils.toChecksumAddress(a) === Web3.utils.toChecksumAddress(b);
 }
 
-export function web3IsEmptyAddress(target: string): boolean {
-  return web3AddressEq(target, EmptyAddress);
+export function web3IsEmptyAddress(target: string | null | undefined): boolean {
+  return target !== null && target !== undefined && web3AddressEq(target, EmptyAddress);
 }

@@ -98,7 +98,9 @@ export async function loadLiquidityMiningData(
     }
   }
   dexPairsExecutor.add(
-    batch => services.web3Services.tokenAsAService.views.tokenomics<string>(config, data.token.address, {}, batch, response => data.tokenTokenomicsAddress = response, _ => {
+    batch => services.web3Services.tokenAsAService.views.tokenomics<string>(config, data.token.address, {}, batch, response => {
+      data.tokenTokenomicsAddress = response ?? EmptyAddress;
+    }, _ => {
       data.tokenTokenomicsAddress = EmptyAddress;
     }),
     batch => lmContract.views.owner<string>(config, data.address!, {}, batch, response => data.owner.address = response),
