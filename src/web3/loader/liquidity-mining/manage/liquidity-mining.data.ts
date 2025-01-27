@@ -16,7 +16,7 @@ export class LiquidityMiningData extends DeployLiquidityMiningData {
 
   public predefinedPairingTokens: { address: string, name: string }[] = [];
 
-  public owner: { name: string, address: string } = { name: '', address: '' };
+  public owner: string = '';
 
   public stakingCommonAddress: string = EmptyAddress;
   public stakingCommonRewardsTokens: StakingRewardToken[] = [];

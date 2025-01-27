@@ -103,7 +103,6 @@ export async function loadLiquidityMiningData(
     }, _ => {
       data.tokenTokenomicsAddress = EmptyAddress;
     }),
-    batch => lmContract.views.owner<string>(config, data.address!, {}, batch, response => data.owner.address = response),
   );
 
   if (data.hasStaking) {
@@ -139,21 +138,8 @@ export async function loadLiquidityMiningData(
       mainExecutor.add(batch => services.web3Services.token.views.name<string>(config, predefinedToken.address, {}, batch, response => predefinedToken.name = response));
     }
 
-    if (!web3AddressEq(data.owner.address, forWallet)) {
-      mainExecutor.add(batch => services.web3Services.decentralizedEntityInterface.views
-        .name<string>(config, data.owner.address, {}, batch,
-          (x: string) => data.owner.name = x,
-          _ => {
-            data.owner.name = 'Unknown Wallet';
-          },
-        ),
-      );
-    } else {
-      data.owner.name = 'My Wallet';
-    }
-
     mainExecutor.add(
-      batch => lmContract.views.owner<string>(config, data.address!, {}, batch, response => data.owner.address = response),
+      batch => lmContract.views.owner<string>(config, data.address!, {}, batch, response => data.owner = response),
       async batch => services.web3Services.contractDeployer.views
         .isUpgradeable<boolean>(config, await router.contractDeployer, { _contract: data.address! }, batch, (x) => (data.isUpgradeable = x)))
     ;
